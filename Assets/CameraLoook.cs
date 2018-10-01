@@ -4,19 +4,17 @@ using UnityEngine;
 
 public class CameraLoook : MonoBehaviour {
 
-    //STEROWANIE
-    bool MouseLook = true;
     public float mouseSensitivity = 100.0f;
     public float clampAngle = 80.0f;
     private float rotY = 0.0f; // rotation around the up/y axis
     private float rotX = 0.0f; // rotation around the right/x axisn
-    public GameObject character;
+    int GuiMessage = 0;
+    public Character character;
     public Camera TPCamera;
     SpringJoint Joint = null;
     Rigidbody targetJoint;
-    float Distance = 2;
+    float Distance = 15;
     void Start () {
-		
 	}
 	
 	// Update is called once per frame
@@ -72,8 +70,55 @@ public class CameraLoook : MonoBehaviour {
 
 
             }
-            if (hit.collider.tag == "")
+            if (hit.collider.tag == "rifle" )
             {
+                GuiMessage = 1;
+                if(Input.GetKeyDown(KeyCode.F))
+                {
+                    if(!character.GunsList.Contains(GunType.rifle))
+                    {
+                        character.GunsList.Add(GunType.rifle);
+                        Debug.Log("Podniesiono rajfla!");
+                        character.Ammo[1] += 10;
+                        Destroy(hit.collider.gameObject);
+                        character.GunsCount = character.GunsList.Count;
+                        Debug.Log("MASZ:" + character.GunsCount + " BRONI(E)");
+                    }
+                    else
+                    {
+                        Debug.Log("Masz juz rajfla! podniesiono ammo");
+                        character.Ammo[1] += 10;
+                        Destroy(hit.collider.gameObject);
+                    }
+
+                }
+            }
+            else if(hit.collider.tag == "pistol")
+            {
+                GuiMessage = 2;
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    if (!character.GunsList.Contains(GunType.pistol))
+                    {
+                        character.GunsList.Add(GunType.pistol);
+                        Debug.Log("Podniesiono pistola!");
+                        character.Ammo[0] += 10;
+                        Destroy(hit.collider.gameObject);
+                        character.GunsCount = character.GunsList.Count;
+                        Debug.Log("MASZ:" + character.GunsCount + " BRONI(E)");
+                    }
+                    else
+                    {
+                        Debug.Log("Masz juz pistola!, podniesiono ammo");
+                        character.Ammo[0] += 10;
+                        Destroy(hit.collider.gameObject);
+                    }
+
+                }
+            }
+            else
+            {
+                GuiMessage = 0;
             }
         }
     }
@@ -87,5 +132,24 @@ public class CameraLoook : MonoBehaviour {
         {
             TPCamera.depth = 1;
         }
+    }
+    private void OnGUI()
+    {
+        GUI.Button(new Rect(Screen.width / 2, Screen.height / 2, 30, 30), character.Ammo[character.SelectedGun].ToString());
+        switch (GuiMessage)
+        {
+            case 1:
+                GUI.Label(new Rect(Screen.width/2, Screen.height/2, 280, 20), "PICK UP RIFLE!");
+                break;
+            case 2:
+                GUI.Label(new Rect(Screen.width / 2, Screen.height / 2, 280, 20), "PICK UP PISTOL!");
+                break;
+
+            default:
+                GUI.Label(new Rect(Screen.width / 2, Screen.height / 2, 280, 20), "");
+                break;
+        }
+
+
     }
 }

@@ -4,14 +4,21 @@ using UnityEngine;
 
 public class bullet : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-        GetComponent<Rigidbody>().AddRelativeForce(new Vector3(0, 0, 100), ForceMode.Impulse);
+    bool accelarate = true;
+    Rigidbody BulletBody;
+    void Start () {
+        BulletBody = GetComponent<Rigidbody>();
+        if (accelarate)
+        {
+            BulletBody.AddRelativeForce(0, 0, 100f, ForceMode.Impulse);
+            accelarate = false;
+        }
         Destroy(this.gameObject, 3);
     }
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+
+
+    }
 }

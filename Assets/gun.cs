@@ -4,21 +4,20 @@ using UnityEngine;
 
 public class gun : MonoBehaviour {
 
-
-
+    public Mesh pistolMesh;
+    public Mesh rifleMesh;
+    public MeshFilter GunMesh;
     public GameObject Barrel;
     public GameObject Bullet;
     public GameObject Eyepos;
     public GameObject Hippos;
 	void Start () {
-
-	}
+        GunMesh = GetComponent<MeshFilter>();
+        GunMesh.mesh = pistolMesh;
+    }
 	
 	void Update () {
-		if(Input.GetMouseButtonDown(0))
-        {
-            Instantiate(Bullet, Barrel.transform.position,Barrel.transform.rotation);
-        }
+
         if(Input.GetMouseButtonDown(1))
         {
             transform.position = Eyepos.transform.position;
