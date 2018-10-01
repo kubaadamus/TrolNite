@@ -8,6 +8,11 @@ TagManager:
   - gripable
   - rifle
   - pistol
+  - shotgun
+  - shotgunAmmo
+  - Medikit
+  - pistolAmmo
+  - bullet
   layers:
   - Default
   - TransparentFX

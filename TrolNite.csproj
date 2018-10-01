@@ -220,10 +220,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\bullet.cs" />
-    <Compile Include="Assets\CameraLoook.cs" />
-    <Compile Include="Assets\Character.cs" />
-    <Compile Include="Assets\gun.cs" />
+    <Compile Include="Assets\npcMove.cs" />
+    <Compile Include="Assets\Scripts\bullet.cs" />
+    <Compile Include="Assets\Scripts\CameraLoook.cs" />
+    <Compile Include="Assets\Scripts\Character.cs" />
+    <Compile Include="Assets\Scripts\gun.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
