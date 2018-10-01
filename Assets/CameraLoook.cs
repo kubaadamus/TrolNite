@@ -11,6 +11,7 @@ public class CameraLoook : MonoBehaviour {
     private float rotY = 0.0f; // rotation around the up/y axis
     private float rotX = 0.0f; // rotation around the right/x axisn
     public GameObject character;
+    public Camera TPCamera;
     SpringJoint Joint = null;
     Rigidbody targetJoint;
     float Distance = 2;
@@ -21,6 +22,7 @@ public class CameraLoook : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         Raycast();
+        ChangeCamera();
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = -Input.GetAxis("Mouse Y");
         rotY += mouseX * mouseSensitivity * Time.deltaTime;
@@ -73,6 +75,17 @@ public class CameraLoook : MonoBehaviour {
             if (hit.collider.tag == "")
             {
             }
+        }
+    }
+    void ChangeCamera()
+    {
+        if(Input.GetKeyDown(KeyCode.F1))
+        {
+            TPCamera.depth = 0;
+        }
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            TPCamera.depth = 1;
         }
     }
 }
