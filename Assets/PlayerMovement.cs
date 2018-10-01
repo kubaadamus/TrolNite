@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     private float rotY = 0.0f; // rotation around the up/y axis
     private float rotX = 0.0f; // rotation around the right/x axis
                                //RAYCAST
-    float Distance = 3;
+    float Distance = 2;
     void Start()
     {
         //Sterowanie
@@ -100,11 +100,12 @@ public class PlayerMovement : MonoBehaviour
                     Joint.anchor = new Vector3(0, 0, 0);
                     Joint.autoConfigureConnectedAnchor = false;
                     Joint.connectedAnchor = new Vector3(0, 0, 0);
-                    Joint.minDistance = 5.0f;
-                    Joint.maxDistance = 10.0f;
+                    Joint.minDistance = 1.0f;
+                    Joint.maxDistance = 2.0f;
                     Debug.Log("GRIP XD");
                     targetJoint = hit.rigidbody;
                     Joint.connectedBody = targetJoint;
+                    Joint.enableCollision = true;
                 }
 
 
