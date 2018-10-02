@@ -220,7 +220,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\ColliderScript.cs" />
+    <Compile Include="Assets\ElevatorScript.cs" />
+    <Compile Include="Assets\EnemyPlantScriptHANDMADE.cs" />
+    <Compile Include="Assets\GameController.cs" />
     <Compile Include="Assets\npcMove.cs" />
+    <Compile Include="Assets\ParticleScript.cs" />
     <Compile Include="Assets\Scripts\bullet.cs" />
     <Compile Include="Assets\Scripts\CameraLoook.cs" />
     <Compile Include="Assets\Scripts\Character.cs" />

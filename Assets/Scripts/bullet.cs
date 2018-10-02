@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class bullet : MonoBehaviour {
 
+    public GameObject Particles;
+    public string NazwaGracza = "";
     bool accelarate = true;
     Rigidbody BulletBody;
     void Start () {
@@ -21,4 +23,12 @@ public class bullet : MonoBehaviour {
 
 
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+
+        Instantiate(Particles, transform.position,transform.rotation);
+        Destroy(gameObject);
+    }
+
 }

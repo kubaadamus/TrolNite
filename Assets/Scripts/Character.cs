@@ -5,6 +5,8 @@ public enum GunType { pistol, shotgun };
 
 public class Character : MonoBehaviour
 {
+    public string NazwaGracza = "";
+    public bullet pocisk;
     public List<GunType> GunsList;
     public int Health=50;
     public gun Gun;
@@ -31,8 +33,10 @@ public class Character : MonoBehaviour
         {
             if(Ammo[SelectedGun]>0)
             {
-                Instantiate(Gun.Bullet, Gun.Barrel.transform.position, Gun.Barrel.transform.rotation);
+                pocisk.NazwaGracza = NazwaGracza;
+                Instantiate(pocisk, Gun.Barrel.transform.position, Gun.Barrel.transform.rotation);
                 Ammo[SelectedGun]--;
+                //Debug.Log("Gracz: " + pocisk.NazwaGracza + " wystrzelił pocisk i ma teraz " + Ammo[SelectedGun] + " ammo.");
             }
 
         }
@@ -68,7 +72,7 @@ public class Character : MonoBehaviour
 
         if (!ctrl.isGrounded)
         {
-            Debug.Log("Walnales w ziemie z sila: " + ctrl.velocity.magnitude);
+            //Debug.Log("Walnales w ziemie z sila: " + ctrl.velocity.magnitude);
             if (ctrl.velocity.magnitude > 22)
             {
                 Health -= 50;
@@ -101,7 +105,7 @@ public class Character : MonoBehaviour
             if(SelectedGun<GunsCount-1)
             {
                 SelectedGun ++;
-                Debug.Log("Wybrano: " + GunsList[SelectedGun]);
+                //Debug.Log("Wybrano: " + GunsList[SelectedGun]);
                 ChangeGunMesh();
 
             }
@@ -111,7 +115,7 @@ public class Character : MonoBehaviour
             if(SelectedGun>0)
             {
                 SelectedGun--;
-                Debug.Log("Wybrano: " + GunsList[SelectedGun]);
+                //Debug.Log("Wybrano: " + GunsList[SelectedGun]);
                 ChangeGunMesh();
             }
         }

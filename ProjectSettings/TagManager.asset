@@ -13,6 +13,7 @@ TagManager:
   - Medikit
   - pistolAmmo
   - bullet
+  - NPC
   layers:
   - Default
   - TransparentFX
