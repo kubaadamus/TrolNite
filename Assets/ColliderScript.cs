@@ -19,6 +19,6 @@ public class ColliderScript : MonoBehaviour {
 
     public void OnTriggerEnter(Collider other)
     {
-        skrypt.DamageHandler(name);
+        skrypt.DamageHandler(name,other.tag);
     }
 }

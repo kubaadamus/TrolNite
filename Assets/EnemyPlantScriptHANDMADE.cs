@@ -5,8 +5,7 @@ using UnityEngine;
 public class EnemyPlantScriptHANDMADE : MonoBehaviour {
 
     public enum AnimationState {Idle,Hit,Damage};
-    public CapsuleCollider[] CapsuleCollidersArray;
-    public string nameEnemyPlanta = "";
+    public int health = 100;
     Animation anim;
    	void Start () {
         anim = GetComponent<Animation>();
@@ -17,22 +16,9 @@ public class EnemyPlantScriptHANDMADE : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            anim.Play("Hit");
-
-
-        }
-
         if (!anim.isPlaying)
         {
             anim.Play("Idle");
-        }
-
-        if(Input.GetKeyDown(KeyCode.R))
-        {
-            anim.Stop();
-            anim.Play("Damage");
         }
 		
 	}
@@ -43,15 +29,30 @@ public class EnemyPlantScriptHANDMADE : MonoBehaviour {
         anim.Play("Damage");
 
     }
-    public void DamageHandler(string ColliderName)
+    public void DamageHandler(string ColliderName, string other)
     {
-        if(ColliderName=="headCollider")
+        if(other=="bullet")
         {
-            Debug.Log("Obsługuję Headshota!");
+            if (ColliderName == "headCollider")
+            {
+                Debug.Log("Obsługuję Headshota!");
+                anim.Stop();
+                anim.Play("Damage");
+                health -= 50;
+            }
+            else if (ColliderName == "bodyCollider")
+            {
+                Debug.Log("Obsługuję Body Shota ! ");
+                anim.Stop();
+                anim.Play("Damage");
+                health -= 20;
+            }
+
+            if (health <= 0)
+            {
+                Destroy(gameObject);
+            }
         }
-        else if (ColliderName == "bodyCollider")
-        {
-            Debug.Log("Obsługuję Body Shota ! ");
-        }
+
     }
 }

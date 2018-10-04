@@ -18,13 +18,5 @@ public class gun : MonoBehaviour {
 	
 	void Update () {
 
-        if(Input.GetMouseButtonDown(1))
-        {
-            transform.position = Eyepos.transform.position;
-        }
-        if (Input.GetMouseButtonUp(1))
-        {
-            transform.position = Hippos.transform.position;
-        }
 	}
 }

@@ -23,7 +23,6 @@ GameObject:
   - component: {fileID: 23886931166384936}
   - component: {fileID: 54255106125610494}
   - component: {fileID: 114440498198998524}
-  - component: {fileID: 136418748674007472}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: bullet
@@ -92,9 +91,9 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1662222514693356}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 0.2
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -113,16 +112,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Particles: {fileID: 1083349566086338, guid: f0615938fc0e32b47bea047af3eb941e, type: 2}
   NazwaGracza: ziomeczek
---- !u!136 &136418748674007472
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1662222514693356}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.00248801
-  m_Height: 0.002351304
-  m_Direction: 1
-  m_Center: {x: 0.000000001193257, y: 0.0000000028812792, z: 0.00064385065}
+  BulletHitAudioSource: {fileID: 1660747859606176, guid: 6dc59bead48894845bf97cb52563e46a,
+    type: 2}
+  RayCastPinpointObject: {fileID: 1875752554387528, guid: 49afcb9e0019ec84a9f311783c1f4919,
+    type: 2}

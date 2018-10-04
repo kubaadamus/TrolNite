@@ -8,7 +8,7 @@ public class npcMove : MonoBehaviour {
     [SerializeField]
     Transform _destination;
     Rigidbody body;
-    NavMeshAgent _navMeshAgent;
+    public NavMeshAgent _navMeshAgent;
 	void Start () {
         _navMeshAgent = this.GetComponent<NavMeshAgent>();
         if(_navMeshAgent == null)
@@ -45,5 +45,13 @@ public class npcMove : MonoBehaviour {
             Destroy(_navMeshAgent);
             GameController.KillNPC(this.gameObject);
         }
+    }
+
+    public void DestroyNavMesh()
+    {
+        Destroy(_navMeshAgent);
+        body = gameObject.AddComponent(typeof(Rigidbody)) as Rigidbody;
+        GameController.KillNPC(this.gameObject);
+
     }
 }

@@ -27,7 +27,7 @@ public class GameController : MonoBehaviour {
 
         if(NPCList.Count==0)
         {
-            SceneManager.LoadScene("S1");
+            //SceneManager.LoadScene("S1");
         }
     }
 }

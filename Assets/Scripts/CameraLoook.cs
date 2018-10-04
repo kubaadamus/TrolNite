@@ -15,6 +15,7 @@ public class CameraLoook : MonoBehaviour
     SpringJoint Joint = null;
     Rigidbody targetJoint;
     float Distance = 15;
+    public GameObject HandPosition;
     void Start()
     {
 
@@ -34,7 +35,7 @@ public class CameraLoook : MonoBehaviour
         character.transform.rotation = Quaternion.Euler(character.transform.rotation.x, rotY, character.transform.rotation.z);
         transform.rotation = localRotation;
 
-        if (Input.GetMouseButtonUp(1))
+        if (Input.GetKeyUp(KeyCode.F))
         {
             if (Joint != null)
             {
@@ -61,17 +62,30 @@ public class CameraLoook : MonoBehaviour
         //STRZELANIE RAYCASTEM
         if (Physics.Raycast(landingRay, out hit, Distance))
         {
-            if (hit.collider.tag == "gripable" )
+            if (hit.collider.tag == "gripable" || hit.collider.tag == "NPC")
             {
                 GuiMessage = "Grab "+hit.collider.name.ToString();
-                if (Input.GetMouseButtonDown(0) && Joint == null)
+
+
+
+
+
+                if (Input.GetKey(KeyCode.F) && Joint == null)
                 {
+                    if (hit.collider.tag == "NPC")
+                    {
+                        hit.collider.gameObject.GetComponent<npcMove>().DestroyNavMesh();
+                    }
                     Joint = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
-                    Joint.anchor = new Vector3(0, 0, 0);
+                    Joint.anchor = HandPosition.transform.localPosition;
                     Joint.autoConfigureConnectedAnchor = false;
                     Joint.connectedAnchor = new Vector3(0, 0, 0);
-                    Joint.minDistance = 1.0f;
-                    Joint.maxDistance = 2.0f;
+
+                    Joint.minDistance = 0.0f;
+                    Joint.maxDistance = 0.1f;
+                    Joint.spring = 80;
+                    Joint.damper = 2;
+
                     Debug.Log("GRIP XD");
                     targetJoint = hit.rigidbody;
                     Joint.connectedBody = targetJoint;
