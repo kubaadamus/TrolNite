@@ -207,9 +207,12 @@ public class Character : MonoBehaviour
             Vector3 reflectVec = Vector3.Reflect(incomingVec, hit.normal);
 
             Debug.DrawRay(hit.point, reflectVec);
-            Instantiate(Particles, hit.point, Quaternion.Euler(reflectVec));
 
-            GameObject NewRayCastPinpoint = Instantiate(RayCastPinpointObject, hit.point, Quaternion.LookRotation(hit.normal));
+            Instantiate(Particles, hit.point, Quaternion.LookRotation(reflectVec));
+
+            GameObject NewRayCastPinpoint = Instantiate(RayCastPinpointObject, hit.point +hit.normal.normalized/50.0f, Quaternion.LookRotation(hit.normal));
+
+
 
             NewRayCastPinpoint.transform.SetParent(hit.collider.transform);
 
