@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public enum GunType { pistol, shotgun, rifle, sniper, granade, mine };
+public enum GunType {meelee, pistol, shotgun, rifle, sniper, granade, mine };
 public class GunItem // Gun Item specjalnie do przechowywania w ekwipunku
 {
     public int GunHealth = 100;
@@ -19,8 +19,8 @@ public class Gun : MonoBehaviour {  //Rzeczywisty obiekt, który będzie obsług
     public GameObject Particles;
     public GameObject BulletHitAudioSource;
     public bullet pocisk;
-    public AudioClip Shot;
-    public AudioClip OutOfAmmo;
+    public AudioClip ShotAudioClip;
+    public AudioClip OutOfAmmoAudioClip;
     public AudioSource DesertShotAudioSource;
     public AudioSource DesertNoAmmoAudioSource;
     bool machinegunIsFireing = false;
@@ -31,21 +31,30 @@ public class Gun : MonoBehaviour {  //Rzeczywisty obiekt, który będzie obsług
     float LastTimeBulletWasShot = 0;
     public GameObject GunBarrelPosition;
     //-----wszystko powyzej do guna!
+    public GunType Type;
+    public int Health = 100;
+    public GunAmmoType AmmoType;
+    public int AmmoLoaded = 10;
 
+    public void Shot()
+    {
+        Debug.Log("Strzeliles z :" + Type);
+    }
+
+    /*
     void Start()
     {
         LastTimeBulletWasShot = Time.timeSinceLevelLoad;
     }
 
-    int GunHealth = 100;
-    int GunAmmoLoaded = 10;
+
 
     void Update()
     {
         //SHOOT
         if (Input.GetMouseButtonDown(0) && !machinegunIsFireing)
         {
-            if (GunAmmoLoaded > 0)
+            if (AmmoLoaded > 0)
             {
 
 
@@ -62,11 +71,11 @@ public class Gun : MonoBehaviour {  //Rzeczywisty obiekt, który będzie obsług
         if (machinegunIsFireing && Time.timeSinceLevelLoad > LastTimeBulletWasShot + 0.05f)
         {
             LastTimeBulletWasShot = Time.timeSinceLevelLoad + 0.05f;
-            if (GunAmmoLoaded > 0)
+            if (AmmoLoaded > 0)
             {
 
                 Destroy(Instantiate(pocisk, GunBarrelPosition.transform.position, GunBarrelPosition.transform.rotation), 1);
-                GunAmmoLoaded--;
+                AmmoLoaded--;
                 //Debug.Log("Gracz: " + pocisk.NazwaGracza + " wystrzelił pocisk i ma teraz " + Ammo[SelectedGun] + " ammo.");
                 GunShoot();
                 DesertShotAudioSource.Play();
@@ -141,4 +150,5 @@ public class Gun : MonoBehaviour {  //Rzeczywisty obiekt, który będzie obsług
         }
 
     }
+    */
 }

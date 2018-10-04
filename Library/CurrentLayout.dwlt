@@ -20,7 +20,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 2}
-  m_MinSize: {x: 950, y: 571}
+  m_MinSize: {x: 950, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &2
 MonoBehaviour:
@@ -108,10 +108,10 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 909, y: 521}
-  m_MaxSize: {x: 22004, y: 12021}
+  m_MinSize: {x: 917, y: 563}
+  m_MaxSize: {x: 22012, y: 12063}
   vertical: 0
-  controlID: 13689
+  controlID: 63
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -133,10 +133,10 @@ MonoBehaviour:
     y: 0
     width: 1020
     height: 947
-  m_MinSize: {x: 202, y: 521}
-  m_MaxSize: {x: 4002, y: 12021}
+  m_MinSize: {x: 202, y: 563}
+  m_MaxSize: {x: 4002, y: 12063}
   vertical: 1
-  controlID: 13754
+  controlID: 99
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -181,8 +181,8 @@ MonoBehaviour:
     y: 299
     width: 1020
     height: 316
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 202, y: 221}
+  m_MaxSize: {x: 4002, y: 4021}
   m_ActualView: {fileID: 13}
   m_Panes:
   - {fileID: 13}
@@ -206,8 +206,8 @@ MonoBehaviour:
     y: 615
     width: 1020
     height: 332
-  m_MinSize: {x: 100, y: 100}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 102, y: 121}
+  m_MaxSize: {x: 4002, y: 4021}
   m_ActualView: {fileID: 16}
   m_Panes:
   - {fileID: 16}
@@ -392,14 +392,14 @@ MonoBehaviour:
     width: 1018
     height: 278
   m_SceneLighting: 1
-  lastFramingTime: 9575.20364449144
+  lastFramingTime: 4672.848251518196
   m_2DMode: 0
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -3.601252, y: 8.947588, z: 0.5865193}
+    m_Target: {x: 0.2746783, y: 7.0025344, z: 15.425014}
     speed: 2
-    m_Value: {x: -3.601252, y: 8.947588, z: 0.5865193}
+    m_Value: {x: 0.2746783, y: 7.0025344, z: 15.425014}
   m_RenderMode: 0
   m_ValidateTrueMetals: 0
   m_SceneViewState:
@@ -422,13 +422,13 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: -0.0644982, y: 0.7078896, z: -0.06519899, w: -0.7003437}
+    m_Target: {x: -0.20973954, y: 0.35167894, z: -0.08117578, w: -0.9087033}
     speed: 2
-    m_Value: {x: -0.0644982, y: 0.7078896, z: -0.06519899, w: -0.7003437}
+    m_Value: {x: -0.20973955, y: 0.35167897, z: -0.08117579, w: -0.9087034}
   m_Size:
-    m_Target: 5.411438
+    m_Target: 1.2393382
     speed: 2
-    m_Value: 5.411438
+    m_Value: 1.2393382
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -522,9 +522,9 @@ MonoBehaviour:
     height: 926
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: a0290000
-    m_LastClickedID: 10656
-    m_ExpandedIDs: 86fbffff8efbffffa6fbffff00000000dc2800000e290000a0290000
+    m_SelectedIDs: 824ef7ff
+    m_LastClickedID: -569726
+    m_ExpandedIDs: 82fbffffa6fbffff00000000f228000020290000c0290000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -585,19 +585,19 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets
+    - Assets/Prefabs
   m_ViewMode: 1
   m_StartGridSize: 69
   m_LastFolders:
-  - Assets
+  - Assets/Prefabs
   m_LastFoldersGridSize: 69
   m_LastProjectPath: D:\PROJEKTY\projekty_unity\TrolNite
   m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 66270000
-    m_LastClickedID: 10086
-    m_ExpandedIDs: 0000000066270000782700008e27000000ca9a3bffffff7f
+    m_SelectedIDs: 14280000
+    m_LastClickedID: 10260
+    m_ExpandedIDs: 000000006c2700007e2700009427000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -625,7 +625,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000066270000782700008e27000000ca9a3bffffff7f
+    m_ExpandedIDs: 000000006c2700007e27000094270000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -653,7 +653,7 @@ MonoBehaviour:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: 00000000088f0000089bfdff2c34fbffaa2e0000aa8f0000b2270000d2a20000eca20000
+    m_ExpandedInstanceIDs: 088f0000089bfdff2c34fbffaa2e0000aa8f0000b2270000d2a20000eca2000000000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

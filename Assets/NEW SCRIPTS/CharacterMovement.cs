@@ -156,76 +156,26 @@ public class CharacterMovement : MonoBehaviour
                     hit.rigidbody.drag = 4;
                     Joint.enableCollision = true;
                 }
-            }                   //ŁAPANIE obiektów gripable
-            //Łapanie broni
-            else if (hit.collider.tag == "shotgun")
+            } 
+            //ŁAPANIE BRONI
+            else if (hit.collider.GetComponent<Gun>())
             {
-                GuiMessage = "Grab SHOTGUN";
+                GuiMessage = "Grab "+ hit.collider.GetComponent<Gun>().Type;
                 if (Input.GetKeyDown(KeyCode.F))
                 {
-                    if (!character.GunsList.Exists(f => f.Type == GunType.shotgun))     //Czy na liscie broni znajduje sie .. szotgan ?
+                    if (!character.GunsList.Exists(f => f.Type == hit.collider.GetComponent<Gun>().Type))     //Czy na liscie broni znajduje sie .. szotgan ?
                     {
-                        character.GunsList.Add(new GunItem(GunType.shotgun, 100));
-                        Debug.Log("Podniesiono szotgana!");
+                        character.GunsList.Add(new GunItem(hit.collider.GetComponent<Gun>().Type, hit.collider.GetComponent<Gun>().Health));
+                        Debug.Log("Podniesiono "+ hit.collider.GetComponent<Gun>().Type + " health:" + hit.collider.GetComponent<Gun>().Health + " ammo: " + hit.collider.GetComponent<Gun>().AmmoLoaded);
                         Destroy(hit.collider.gameObject);
                         Debug.Log(character.GunsList.Count);
                     }
                     else
                     {
-                        Debug.Log("Masz juz shotguna! podniesiono ammo");
-                        character.GunAmmoList.Add(new GunAmmoItem(GunAmmoType.shotgun_ammo, 100));
+                        Debug.Log("Masz juz " + hit.collider.GetComponent<Gun>().Type+" podniesiono ammo: " + hit.collider.GetComponent<Gun>().AmmoLoaded + "sztuk");
+                        character.GunAmmoList.Add(new GunAmmoItem(hit.collider.GetComponent<Gun>().AmmoType, hit.collider.GetComponent<Gun>().AmmoLoaded));
                         Destroy(hit.collider.gameObject);
                     }
-                }
-            }
-            else if (hit.collider.tag == "pistol")
-            {
-                GuiMessage = "Grab PISTOL";
-                if (Input.GetKeyDown(KeyCode.F))
-                {
-                    if (!character.GunsList.Exists(f => f.Type == GunType.pistol))
-                    {
-                        character.GunsList.Add(new GunItem(GunType.pistol, 100));
-                        Debug.Log("Podniesiono pistola!");
-                        Destroy(hit.collider.gameObject);
-                        Debug.Log(character.GunsList.Count);
-                    }
-                    else
-                    {
-                        Debug.Log("Masz juz pistola!, podniesiono ammo");
-                        character.GunAmmoList.Add(new GunAmmoItem(GunAmmoType.pistol_ammo, 100));
-                        Destroy(hit.collider.gameObject);
-                    }
-
-                }
-
-            }
-            else if (hit.collider.tag == "shotgunAmmo")
-            {
-                GuiMessage = "Grab SHOTGUN AMMO";
-                if (Input.GetKeyDown(KeyCode.F))
-                {
-                    Debug.Log("Podniesiono shotgun Ammo");
-                    Destroy(hit.collider.gameObject);
-                }
-            }
-            else if (hit.collider.tag == "pistolAmmo")
-            {
-                GuiMessage = "Grab PISTOL AMMO";
-                if (Input.GetKeyDown(KeyCode.F))
-                {
-                    Debug.Log("Podniesiono pistol Ammo");
-                    Destroy(hit.collider.gameObject);
-                }
-            }
-            else if (hit.collider.tag == "Medikit")
-            {
-                GuiMessage = "Grab Medikit";
-                if (Input.GetKeyDown(KeyCode.F))
-                {
-                    Debug.Log("Podniesiono Medikit");
-                    character.Health += 50;
-                    Destroy(hit.collider.gameObject);
                 }
             }
             else
