@@ -222,7 +222,6 @@
   <ItemGroup>
     <Compile Include="Assets\BulletHitAudioSourceScript.cs" />
     <Compile Include="Assets\ColliderScript.cs" />
-    <Compile Include="Assets\CurrentGunPositionScript.cs" />
     <Compile Include="Assets\DesertEagleScript.cs" />
     <Compile Include="Assets\ElevatorScript.cs" />
     <Compile Include="Assets\EnemyPlantScriptHANDMADE.cs" />
@@ -231,14 +230,19 @@
     <Compile Include="Assets\MultiplayerStuff\Bullet_multiplayer_Script.cs" />
     <Compile Include="Assets\MultiplayerStuff\HealthScript.cs" />
     <Compile Include="Assets\MultiplayerStuff\Player_multi_Controller.cs" />
+    <Compile Include="Assets\NEW SCRIPTS\Character.cs" />
+    <Compile Include="Assets\NEW SCRIPTS\CharacterCamera.cs" />
+    <Compile Include="Assets\NEW SCRIPTS\CharacterMovement.cs" />
+    <Compile Include="Assets\NEW SCRIPTS\Gun.cs" />
+    <Compile Include="Assets\NEW SCRIPTS\GunAmmo.cs" />
     <Compile Include="Assets\npcMove.cs" />
     <Compile Include="Assets\ParticleScript.cs" />
     <Compile Include="Assets\Scripts\bullet.cs" />
     <Compile Include="Assets\Scripts\CameraLoook.cs" />
-    <Compile Include="Assets\Scripts\Character.cs" />
     <Compile Include="Assets\Scripts\gun.cs" />
     <Compile Include="Assets\Scripts\RaycastDebug.cs" />
     <Compile Include="Assets\ShootPinPointScript.cs" />
+    <Compile Include="Assets\TagScripts\_gripable.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

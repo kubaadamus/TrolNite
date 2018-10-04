@@ -1,0 +1,256 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CharacterMovement : MonoBehaviour
+{
+
+    CharacterController ctrl;
+    Vector3 movement = Vector3.zero;
+    Character character;                //Pobiera główny element - character - żeby sie z nim komunikować
+
+    public float jumpFactor = 8.0f;
+    public float speed = 8.5f;
+    public float pushPower = 12.0f;
+    public float fallDamage_MinMagnitude = 30.0f;
+    public float fallDamage_Factor = 0.5f; // HealthDecrease = FallMagnitude * Factor
+
+    //MouseMovement//
+    public float mouseSensitivity = 100.0f;
+    public float clampAngle = 80.0f;
+    private float rotY = 0.0f; // rotation around the up/y axis
+    private float rotX = 0.0f; // rotation around the right/x axisn;
+    public Camera TPCamera;
+    public Camera FPCamera;
+    //HandMovement//
+    public GameObject Eyepos;                           //Pozycja broni przy oku
+    public GameObject Hippos;                           //Pozycja broni przy biodrze
+    public GameObject CurrentItemPosition;              //Aktualna pozycja tego co trzymam w ręce
+    GameObject CurrentItem;                             //Co trzymam w ręce
+    int DestinationFieldOfView = 60;
+    //InteractionRaycast//
+    float InteractionDistance = 15;
+    string GuiMessage = "";
+    RaycastHit hit;
+    Ray landingRay;
+    //==================//
+    void Start()
+    {
+        ctrl = GetComponent<CharacterController>();
+        character = GetComponent<Character>();
+    }
+    void Update()
+    {
+        KeyboardMovement();                 //Obsługa ruchu klawiatury
+        MouseMovement();                    //Obsługa ruchu myszy
+        HandMovement();                     //Obsługa ruchu rąk
+        ChangeCamera();                     //Zmiana kamer
+        CharacterInteractionRaycast();      //Obsługa interakcji użytkownika ze środowiskiem
+
+    }
+    public void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Rigidbody body = hit.collider.attachedRigidbody;                                    //Pobranie rigidbody z ciała uderzanego
+        if (!ctrl.isGrounded)                                                               //FallDamage
+        {
+            if (ctrl.velocity.magnitude > fallDamage_MinMagnitude)
+            {
+                character.Health -= (int)(ctrl.velocity.magnitude * fallDamage_Factor);
+                Debug.Log("Walnales w ziemie z sila: " + ctrl.velocity.magnitude);
+            }
+        }
+
+        if (body == null || body.isKinematic || hit.moveDirection.y < -0.3f)                //Odepchięcie ciała uderzonego
+        {
+
+        }
+        else
+        {
+            Vector3 pushDir = new Vector3(hit.moveDirection.x, 0f, 0f);
+            body.velocity = pushDir * pushPower;
+        }
+    }   //FALL DAMAGE 
+    public void MouseMovement()
+    {
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = -Input.GetAxis("Mouse Y");
+        rotY += mouseX * mouseSensitivity * Time.deltaTime;
+        rotX += mouseY * mouseSensitivity * Time.deltaTime;
+        rotX = Mathf.Clamp(rotX, -clampAngle, clampAngle);
+        Quaternion localRotation = Quaternion.Euler(rotX, rotY, 0.0f);
+        transform.rotation = Quaternion.Euler(character.transform.rotation.x, rotY, character.transform.rotation.z);
+        FPCamera.transform.rotation = Quaternion.Euler(rotX, rotY, character.transform.rotation.z);
+    }
+    public void KeyboardMovement()
+    {
+        if (!ctrl.isGrounded) { movement.y += Physics.gravity.y * Time.deltaTime; }            // Jeśli gracz nie stoi na ziemi to grawitacja działa.
+        if (Input.GetKeyDown(KeyCode.Space) && ctrl.isGrounded) { movement.y = jumpFactor; }   //Skakanie
+        if (Input.GetKeyDown(KeyCode.LeftShift)) { speed = 20.0f; }                            //Bieganie ON
+        if (Input.GetKeyUp(KeyCode.LeftShift)) { speed = 8.5f; }                               //Bieganie OFF
+        if (ctrl.isGrounded)                                                                //Pobieranie inputu
+        {
+            movement.z = Input.GetAxis("Vertical") * speed * transform.forward.z - Input.GetAxis("Horizontal") * speed * transform.forward.x;
+            movement.x = Input.GetAxis("Vertical") * speed * transform.forward.x + Input.GetAxis("Horizontal") * speed * transform.forward.z;
+        }
+        ctrl.Move(movement * Time.deltaTime);
+    }
+    public void HandMovement()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            CurrentItemPosition.transform.position = Eyepos.transform.position;
+            DestinationFieldOfView = 40;
+
+        }
+        if (Input.GetMouseButtonUp(1))
+        {
+            CurrentItemPosition.transform.position = Hippos.transform.position;
+            DestinationFieldOfView = 60;
+        }
+
+        if (FPCamera.fieldOfView != DestinationFieldOfView)
+        {
+            FPCamera.fieldOfView += (DestinationFieldOfView - FPCamera.fieldOfView) / 20.0f;
+        }
+    }
+    void ChangeCamera()
+    {
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            TPCamera.depth = 0;
+        }
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            TPCamera.depth = 1;
+        }
+    }
+    public void CharacterInteractionRaycast()
+    {
+        //Aktualizacja nowego raya
+        landingRay.origin = FPCamera.transform.position;
+        landingRay.direction = FPCamera.transform.forward;
+        Debug.DrawRay(FPCamera.transform.position, FPCamera.transform.forward * InteractionDistance);
+
+        //STRZELANIE RAYCASTEM
+        if (Physics.Raycast(landingRay, out hit, InteractionDistance))
+        {
+            if (hit.collider.GetComponent<_gripable>())
+            {
+                GuiMessage = "Grab " + hit.collider.name.ToString();
+                if (Input.GetKey(KeyCode.F) && !CurrentItemPosition.GetComponent<SpringJoint>())
+                {
+                    if (hit.collider.tag == "NPC")
+                    {
+                        hit.collider.gameObject.GetComponent<npcMove>().DestroyNavMesh();
+                    }
+                    SpringJoint Joint = CurrentItemPosition.AddComponent(typeof(SpringJoint)) as SpringJoint;
+
+                    Joint.anchor = new Vector3(0, 0, 0);
+                    Joint.autoConfigureConnectedAnchor = false;
+                    Joint.connectedAnchor = new Vector3(0, 0, 0);
+                    Joint.minDistance = 0.0f;
+                    Joint.maxDistance = 0.1f;
+                    Joint.spring = 200;
+                    Joint.damper = 0;
+                    Joint.connectedBody = hit.rigidbody;
+                    hit.rigidbody.drag = 4;
+                    Joint.enableCollision = true;
+                }
+            }                   //ŁAPANIE obiektów gripable
+            //Łapanie broni
+            else if (hit.collider.tag == "shotgun")
+            {
+                GuiMessage = "Grab SHOTGUN";
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    if (!character.GunsList.Exists(f => f.Type == GunType.shotgun))     //Czy na liscie broni znajduje sie .. szotgan ?
+                    {
+                        character.GunsList.Add(new GunItem(GunType.shotgun, 100));
+                        Debug.Log("Podniesiono szotgana!");
+                        Destroy(hit.collider.gameObject);
+                        Debug.Log(character.GunsList.Count);
+                    }
+                    else
+                    {
+                        Debug.Log("Masz juz shotguna! podniesiono ammo");
+                        character.GunAmmoList.Add(new GunAmmoItem(GunAmmoType.shotgun_ammo, 100));
+                        Destroy(hit.collider.gameObject);
+                    }
+                }
+            }
+            else if (hit.collider.tag == "pistol")
+            {
+                GuiMessage = "Grab PISTOL";
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    if (!character.GunsList.Exists(f => f.Type == GunType.pistol))
+                    {
+                        character.GunsList.Add(new GunItem(GunType.pistol, 100));
+                        Debug.Log("Podniesiono pistola!");
+                        Destroy(hit.collider.gameObject);
+                        Debug.Log(character.GunsList.Count);
+                    }
+                    else
+                    {
+                        Debug.Log("Masz juz pistola!, podniesiono ammo");
+                        character.GunAmmoList.Add(new GunAmmoItem(GunAmmoType.pistol_ammo, 100));
+                        Destroy(hit.collider.gameObject);
+                    }
+
+                }
+
+            }
+            else if (hit.collider.tag == "shotgunAmmo")
+            {
+                GuiMessage = "Grab SHOTGUN AMMO";
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    Debug.Log("Podniesiono shotgun Ammo");
+                    Destroy(hit.collider.gameObject);
+                }
+            }
+            else if (hit.collider.tag == "pistolAmmo")
+            {
+                GuiMessage = "Grab PISTOL AMMO";
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    Debug.Log("Podniesiono pistol Ammo");
+                    Destroy(hit.collider.gameObject);
+                }
+            }
+            else if (hit.collider.tag == "Medikit")
+            {
+                GuiMessage = "Grab Medikit";
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    Debug.Log("Podniesiono Medikit");
+                    character.Health += 50;
+                    Destroy(hit.collider.gameObject);
+                }
+            }
+            else
+            {
+                GuiMessage = "";
+            }
+
+        }
+        else
+        {
+            GuiMessage = "";
+        }
+        if (Input.GetKeyUp(KeyCode.F) && CurrentItemPosition.GetComponent<SpringJoint>())
+        {
+            CurrentItemPosition.GetComponent<SpringJoint>().connectedBody.GetComponent<Rigidbody>().drag = 0.2f;
+            Destroy(CurrentItemPosition.GetComponent<SpringJoint>());
+
+        }
+    }
+    public void OnGUI()
+    {
+        GUI.Button(new Rect(120, Screen.height - 30, 50, 30), character.Health.ToString()); // HEALTH
+
+        GUI.Label(new Rect(Screen.width / 2, Screen.height / 2, 280, 20), GuiMessage); // MESSAGE
+        GUI.Box(new Rect(Screen.width / 2, Screen.height / 2, 10, 10), ""); // CROSSHAIR
+
+    }
+}
