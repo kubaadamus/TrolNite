@@ -220,7 +220,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\BulletHitAudioSourceScript.cs" />
+    <Compile Include="Assets\AudioSources\AudioSourceHandlerScript.cs" />
+    <Compile Include="Assets\AudioSources\AudioSourceObjectDestroyerScript.cs" />
     <Compile Include="Assets\ColliderScript.cs" />
     <Compile Include="Assets\DesertEagleScript.cs" />
     <Compile Include="Assets\ElevatorScript.cs" />
@@ -239,7 +240,6 @@
     <Compile Include="Assets\ParticleScript.cs" />
     <Compile Include="Assets\Scripts\bullet.cs" />
     <Compile Include="Assets\Scripts\CameraLoook.cs" />
-    <Compile Include="Assets\Scripts\gun.cs" />
     <Compile Include="Assets\Scripts\RaycastDebug.cs" />
     <Compile Include="Assets\ShootPinPointScript.cs" />
     <Compile Include="Assets\TagScripts\_gripable.cs" />

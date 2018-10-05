@@ -9,6 +9,14 @@ public class CharacterMovement : MonoBehaviour
     Vector3 movement = Vector3.zero;
     Character character;                //Pobiera główny element - character - żeby sie z nim komunikować
 
+    //CharacterAudio//
+    public AudioClip JumpAudioClip;
+    public AudioClip FallDamageAudioClip;
+    public AudioClip WalkAudioClip;
+    public AudioClip GunPickUpAudioClip;
+    public Vector3 LastPlayerPosition;
+    float StepDistance = 5.0f;
+
     public float jumpFactor = 8.0f;
     public float speed = 8.5f;
     public float pushPower = 12.0f;
@@ -26,6 +34,7 @@ public class CharacterMovement : MonoBehaviour
     public GameObject Eyepos;                           //Pozycja broni przy oku
     public GameObject Hippos;                           //Pozycja broni przy biodrze
     public GameObject CurrentItemPosition;              //Aktualna pozycja tego co trzymam w ręce
+    public GameObject BackItemPosition;                 //Pozycja itemu w plecaku
     GameObject CurrentItem;                             //Co trzymam w ręce
     int DestinationFieldOfView = 60;
     //InteractionRaycast//
@@ -38,6 +47,7 @@ public class CharacterMovement : MonoBehaviour
     {
         ctrl = GetComponent<CharacterController>();
         character = GetComponent<Character>();
+        LastPlayerPosition = transform.position;
     }
     void Update()
     {
@@ -57,6 +67,7 @@ public class CharacterMovement : MonoBehaviour
             {
                 character.Health -= (int)(ctrl.velocity.magnitude * fallDamage_Factor);
                 Debug.Log("Walnales w ziemie z sila: " + ctrl.velocity.magnitude);
+                AudioSourceHandlerScript.PlayAudio(FallDamageAudioClip, transform.position, 1.0f);
             }
         }
 
@@ -84,7 +95,11 @@ public class CharacterMovement : MonoBehaviour
     public void KeyboardMovement()
     {
         if (!ctrl.isGrounded) { movement.y += Physics.gravity.y * Time.deltaTime; }            // Jeśli gracz nie stoi na ziemi to grawitacja działa.
-        if (Input.GetKeyDown(KeyCode.Space) && ctrl.isGrounded) { movement.y = jumpFactor; }   //Skakanie
+        if (Input.GetKeyDown(KeyCode.Space) && ctrl.isGrounded)                                //Skakanie
+        {
+            movement.y = jumpFactor;
+            AudioSourceHandlerScript.PlayAudio(JumpAudioClip, transform.position, 1.0f);
+        }
         if (Input.GetKeyDown(KeyCode.LeftShift)) { speed = 20.0f; }                            //Bieganie ON
         if (Input.GetKeyUp(KeyCode.LeftShift)) { speed = 8.5f; }                               //Bieganie OFF
         if (ctrl.isGrounded)                                                                //Pobieranie inputu
@@ -93,6 +108,12 @@ public class CharacterMovement : MonoBehaviour
             movement.x = Input.GetAxis("Vertical") * speed * transform.forward.x + Input.GetAxis("Horizontal") * speed * transform.forward.z;
         }
         ctrl.Move(movement * Time.deltaTime);
+
+        if(ctrl.isGrounded && Vector3.Distance(transform.position, LastPlayerPosition)>StepDistance)
+        {
+            AudioSourceHandlerScript.PlayAudio(WalkAudioClip, transform.position, Random.Range(0.8f,1.2f),Random.Range(-0.5f,0.5f));
+            LastPlayerPosition = transform.position;
+        }
     }
     public void HandMovement()
     {
@@ -156,26 +177,49 @@ public class CharacterMovement : MonoBehaviour
                     hit.rigidbody.drag = 4;
                     Joint.enableCollision = true;
                 }
-            } 
+            }
             //ŁAPANIE BRONI
             else if (hit.collider.GetComponent<Gun>())
             {
-                GuiMessage = "Grab "+ hit.collider.GetComponent<Gun>().Type;
+                GuiMessage = "Grab " + hit.collider.GetComponent<Gun>().Type;
                 if (Input.GetKeyDown(KeyCode.F))
                 {
-                    if (!character.GunsList.Exists(f => f.Type == hit.collider.GetComponent<Gun>().Type))     //Czy na liscie broni znajduje sie .. szotgan ?
+                    if (!character.GunsList.Exists(f => f.GetComponent<Gun>().Type == hit.collider.GetComponent<Gun>().Type))     //Czy na liscie broni znajduje sie .. szotgan ?
                     {
-                        character.GunsList.Add(new GunItem(hit.collider.GetComponent<Gun>().Type, hit.collider.GetComponent<Gun>().Health));
-                        Debug.Log("Podniesiono "+ hit.collider.GetComponent<Gun>().Type + " health:" + hit.collider.GetComponent<Gun>().Health + " ammo: " + hit.collider.GetComponent<Gun>().AmmoLoaded);
-                        Destroy(hit.collider.gameObject);
+                        character.GunsList.Add(hit.collider.gameObject);                                                            //Wez do tej listy cały gameobject
+                        hit.collider.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+                        hit.collider.gameObject.GetComponent<Rigidbody>().useGravity = false;
+                        Debug.Log("Podniesiono " + hit.collider.GetComponent<Gun>().Type + " health:" + hit.collider.GetComponent<Gun>().Health + " ammo: " + hit.collider.GetComponent<Gun>().AmmoLoaded);
                         Debug.Log(character.GunsList.Count);
+                        hit.collider.gameObject.transform.position = BackItemPosition.transform.position;
+                        hit.collider.gameObject.transform.rotation = BackItemPosition.transform.rotation;
+                        hit.collider.gameObject.transform.SetParent(BackItemPosition.transform);
+                        AudioSourceHandlerScript.PlayAudio(GunPickUpAudioClip, transform.position, 1.0f);
                     }
                     else
                     {
-                        Debug.Log("Masz juz " + hit.collider.GetComponent<Gun>().Type+" podniesiono ammo: " + hit.collider.GetComponent<Gun>().AmmoLoaded + "sztuk");
-                        character.GunAmmoList.Add(new GunAmmoItem(hit.collider.GetComponent<Gun>().AmmoType, hit.collider.GetComponent<Gun>().AmmoLoaded));
+                        Debug.Log("Masz juz " + hit.collider.GetComponent<Gun>().Type + " podniesiono ammo: " + hit.collider.GetComponent<Gun>().AmmoLoaded + "sztuk");
                         Destroy(hit.collider.gameObject);
                     }
+
+                }
+            }
+            //ŁAPANIE AMMO
+            else if (hit.collider.GetComponent<GunAmmo>())
+            {
+                GuiMessage = "Grab AMMO! " + hit.collider.GetComponent<GunAmmo>().ammoType;
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+
+                    character.GunAmmoList.Add(hit.collider.gameObject);                                                            //Wez do tej listy cały gameobject
+                    hit.collider.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+                    hit.collider.gameObject.GetComponent<Rigidbody>().useGravity = false;
+                    Debug.Log("Podniesiono " + hit.collider.GetComponent<GunAmmo>().ammoType + " amount: " + hit.collider.GetComponent<GunAmmo>().ammoAmount);
+                    Debug.Log(character.GunsList.Count);
+                    hit.collider.gameObject.transform.position = BackItemPosition.transform.position;
+                    hit.collider.gameObject.transform.rotation = BackItemPosition.transform.rotation;
+                    hit.collider.gameObject.transform.SetParent(BackItemPosition.transform);
+                    AudioSourceHandlerScript.PlayAudio(GunPickUpAudioClip, transform.position, 1.0f);
                 }
             }
             else
@@ -203,4 +247,5 @@ public class CharacterMovement : MonoBehaviour
         GUI.Box(new Rect(Screen.width / 2, Screen.height / 2, 10, 10), ""); // CROSSHAIR
 
     }
+
 }

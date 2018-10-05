@@ -6,27 +6,31 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    //Dostęp do prefabów//
-    public Gun Melee;
-    public Gun Pistol;
-    public Gun Shotgun;
-    public Gun InstantiatedGun;
-
+    public GameObject Melee;
     public string NazwaGracza = "";                     //Nazwa gracza
     public int Health = 50;                             //Zycie
-    public List<GunItem> GunsList;                      //Lista broni
-    public List<GunAmmoItem> GunAmmoList;                   //Lista ammo
-    public Gun ActiveGun;                       //Item który teraz trzymam w ręce
+    public List<GameObject> GunsList;                   //Lista broni
+    public List<GameObject> GunAmmoList;               //Lista ammo
+    public Gun ActiveGun = null;                               //Item który teraz trzymam w ręce
     public int SelectedItem = 0;                        //Indeks itemu który trzymam
     CharacterMovement Movement;
+    Vector3 PreviousHandPosition;                       //Poprzednia pozycja ręki do określania szybkości i kierunku rzutu ręką
+    Vector3 HandsMoveVector;                            //Wektor mówiący gdzie i jak mocno macha ręka
+    void FindHandMoveVecetor()
+    {
+        HandsMoveVector = ((Movement.CurrentItemPosition.transform.position - PreviousHandPosition)) / Time.deltaTime;
+        PreviousHandPosition = Movement.CurrentItemPosition.transform.position;
+    }
     void Start()
     {
         Movement = GetComponent<CharacterMovement>();
         Cursor.lockState = CursorLockMode.Locked;
-        GunsList = new List<GunItem>();
-        GunAmmoList = new List<GunAmmoItem>();
-        GunsList.Add(new GunItem(GunType.meelee,100));                       //Dodaj sobie pistola na wstępie
-        //GunAmmoList.Add(new GunAmmoItem(GunAmmoType.pistol_ammo, 100));    //Dodaj sobie objekt 100 sztuka municji do pistola
+        GunsList = new List<GameObject>();
+        GunsList.Add(Instantiate(Melee, Movement.CurrentItemPosition.transform.position, Movement.CurrentItemPosition.transform.rotation));
+        WeaponSelect();
+        GunAmmoList = new List<GameObject>();
+        SetGunActive();
+
     }
     // Update is called once per frame
     void Update()
@@ -35,90 +39,127 @@ public class Character : MonoBehaviour
         DisplayEquipment();                 //Wyświetlanie ekwipunku
         UseGun();                           //Obsługa strzelania z broni
         DropGun();                          //Obsługa wyrzucania broni
+        FindHandMoveVecetor();                  //Określ ruch ręki
+        ReloadGun();                        //Obsługa reloadingu
     }
     public void WeaponSelect()
     {
         if (Input.GetAxis("Mouse ScrollWheel") > 0f && GunsList.Count > 0) // forward
         {
-            if (SelectedItem < GunsList.Count-1)
+            if (SelectedItem < GunsList.Count - 1)
             {
+                SetGunInactive();
                 SelectedItem++;
-                Debug.Log("Wybrano item: " + SelectedItem + " " + GunsList[SelectedItem].Type + " ammo: " + GunsList[SelectedItem].GunAmmoLoaded + " health: " + GunsList[SelectedItem].GunHealth);
-                InstantiateGun(GunsList[SelectedItem].Type, GunsList[SelectedItem].GunAmmoLoaded, GunsList[SelectedItem].GunHealth);
+                SetGunActive();
+                Debug.Log("Wybrano " + GunsList[SelectedItem].GetComponent<Gun>().Type);
+
             }
         }
         else if (Input.GetAxis("Mouse ScrollWheel") < 0f && GunsList.Count > 0) // backwards
         {
             if (SelectedItem > 0)
             {
+                SetGunInactive();
                 SelectedItem--;
-                Debug.Log("Wybrano item: " + SelectedItem + " " + GunsList[SelectedItem].Type + " ammo: " + GunsList[SelectedItem].GunAmmoLoaded + " health: " + GunsList[SelectedItem].GunHealth);
-                InstantiateGun(GunsList[SelectedItem].Type, GunsList[SelectedItem].GunAmmoLoaded, GunsList[SelectedItem].GunHealth);
+                SetGunActive();
+                Debug.Log("Wybrano " + GunsList[SelectedItem].GetComponent<Gun>().Type);
             }
         }
     }
-    public void InstantiateGun(GunType _type, int _ammo, int _health)
+    public void SetGunActive()
     {
+        GunsList[SelectedItem].transform.position = Movement.CurrentItemPosition.transform.position;
+        GunsList[SelectedItem].transform.rotation = Movement.CurrentItemPosition.transform.rotation;
+        GunsList[SelectedItem].transform.SetParent(Movement.CurrentItemPosition.transform);
+        ActiveGun = GunsList[SelectedItem].GetComponent<Gun>();
+        ActiveGun.GetComponent<Animation>().Play("Idle");
+    }
+    public void SetGunInactive()
+    {
+        GunsList[SelectedItem].transform.position = Movement.BackItemPosition.transform.position;
+        GunsList[SelectedItem].transform.rotation = Movement.BackItemPosition.transform.rotation;
+        GunsList[SelectedItem].transform.SetParent(Movement.CurrentItemPosition.transform);
         ActiveGun = null;
-        foreach (Transform child in Movement.CurrentItemPosition.transform)
-        {
-            GameObject.Destroy(child.gameObject);
-        }
-        switch (_type)
-        {
-            case GunType.meelee:
-                InstantiatedGun = Instantiate(Melee, Movement.CurrentItemPosition.transform.position, Movement.CurrentItemPosition.transform.rotation);
-                break;
-            case GunType.pistol:
-                InstantiatedGun = Instantiate(Pistol, Movement.CurrentItemPosition.transform.position, Movement.CurrentItemPosition.transform.rotation);
-                break;
-            case GunType.shotgun:
-                InstantiatedGun = Instantiate(Shotgun, Movement.CurrentItemPosition.transform.position, Movement.CurrentItemPosition.transform.rotation);
-                break;
-        }
-        InstantiatedGun.Type = GunsList[SelectedItem].Type;
-        InstantiatedGun.Health = GunsList[SelectedItem].GunHealth;
-        InstantiatedGun.AmmoLoaded = GunsList[SelectedItem].GunAmmoLoaded;
-
-        InstantiatedGun.transform.SetParent(Movement.CurrentItemPosition.transform);
-        InstantiatedGun.GetComponent<Rigidbody>().isKinematic = true;
-        InstantiatedGun.GetComponent<Rigidbody>().useGravity = false;
-        ActiveGun = InstantiatedGun;
     }
     public void DisplayEquipment()
     {
-        if(Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             Debug.Log("BRONIE---------------");
-            foreach(GunItem gun in GunsList)
+            foreach (GameObject gun in GunsList)
             {
-                Debug.Log("Type: " + gun.Type + " / Health: " + gun.GunHealth + " / Ammo: " + gun.GunAmmoLoaded);
+                Debug.Log("Type: " + gun.GetComponent<Gun>().Type + " / Health: " + gun.GetComponent<Gun>().Health + " / Ammo: " + gun.GetComponent<Gun>().AmmoLoaded);
             }
             Debug.Log("AMMO-----------------");
-            foreach (GunAmmoItem ammo in GunAmmoList)
+            foreach (GameObject ammo in GunAmmoList)
             {
-                Debug.Log("Type: " + ammo.ammoType + " / Amount: " + ammo.ammoAmount);
+                Debug.Log("Type: " + ammo.GetComponent<GunAmmo>().ammoType + " / Amount: " + ammo.GetComponent<GunAmmo>().ammoAmount);
             }
         }
     }
     public void UseGun()
     {
-        if (Input.GetMouseButtonDown(0) && ActiveGun!=null)
+        if (Input.GetMouseButtonDown(0) && ActiveGun != null)
         {
             ActiveGun.Shot();
         }
     }
     public void DropGun()
     {
-        if (Input.GetKeyDown(KeyCode.X) && ActiveGun!=null && ActiveGun.Type!=GunType.meelee)
+        if (Input.GetKeyDown(KeyCode.X) && GunsList[SelectedItem].GetComponent<Gun>().Type!=GunType.meelee)
         {
-            ActiveGun.GetComponent<Rigidbody>().isKinematic = false;
-            ActiveGun.GetComponent<Rigidbody>().useGravity = true;
-            ActiveGun.transform.SetParent(null);
-            var itemToRemove = GunsList.Single(r => r.Type == ActiveGun.Type);
-            Debug.Log("Wyrzucono" + itemToRemove.Type);
-            GunsList.Remove(itemToRemove);
+            GunsList[SelectedItem].GetComponent<Rigidbody>().isKinematic = false;
+            GunsList[SelectedItem].GetComponent<Rigidbody>().useGravity = true;
+            GunsList[SelectedItem].transform.SetParent(null);
 
+            Debug.Log("Wyrzucono: " + GunsList[SelectedItem].GetComponent<Gun>().Type);
+            GunsList.Remove(GunsList[SelectedItem]);
+            SelectedItem = 0;
+            SetGunActive(); 
+        }
+    }
+    public void ReloadGun()
+    {
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            //sprawdz typ broni ktora trzymasz
+            GunType HeldWeaponType = ActiveGun.Type;
+            //sprawdz czy masz ammo w schowku
+            GameObject MatchedAmmoType = null;
+            foreach(GameObject ammo in GunAmmoList)
+            {
+                if (ammo.GetComponent<GunAmmo>().ammoType.ToString() == HeldWeaponType.ToString())
+                {
+                    MatchedAmmoType = ammo;
+                    Debug.Log("Znalazlem odpowiednie ammo w ilosci: " + ammo.GetComponent<GunAmmo>().ammoAmount);
+                }
+                else
+                {
+                    Debug.Log("Nie mam ammo do tej broni :C");
+                }
+            }
+            if(MatchedAmmoType != null && ActiveGun.AmmoLoaded<ActiveGun.MaxAmmo)
+            {
+                //le potrzeba amunicji żeby na max przeładować guna?
+                int NeededAmmo = ActiveGun.MaxAmmo - ActiveGun.AmmoLoaded;
+
+                if(NeededAmmo>=MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount)  //Jeśli potrzeba więcej lub równo tego co mamy w kieszeni to wysyłamy gunowi wszystko
+                {
+                    ActiveGun.Reload(MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount);
+                    MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount = 0;
+                }
+                if(NeededAmmo<MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount)   //Jesli potrzeba mniej niż mamy w kieszeni to wyjmij tyle ile trzeba i wyslij gunowi
+                {
+                    ActiveGun.Reload(ActiveGun.MaxAmmo- ActiveGun.AmmoLoaded);
+                    MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount -= ActiveGun.MaxAmmo - ActiveGun.AmmoLoaded;
+                }
+                Debug.Log("Reloaded! pozostało wolnej amunicji" + MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount);
+                if (MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount == 0)
+                {
+                    GunAmmoList.Remove(MatchedAmmoType);
+                    Destroy(MatchedAmmoType);
+                }
+            }
         }
     }
 }
