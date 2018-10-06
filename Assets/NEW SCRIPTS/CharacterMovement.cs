@@ -24,6 +24,7 @@ public class CharacterMovement : MonoBehaviour
     public float fallDamage_Factor = 0.5f; // HealthDecrease = FallMagnitude * Factor
 
     //MouseMovement//
+    public bool MouseMovementEnabled = true;
     public float mouseSensitivity = 100.0f;
     public float clampAngle = 80.0f;
     private float rotY = 0.0f; // rotation around the up/y axis
@@ -35,24 +36,32 @@ public class CharacterMovement : MonoBehaviour
     public GameObject Hippos;                           //Pozycja broni przy biodrze
     public GameObject CurrentItemPosition;              //Aktualna pozycja tego co trzymam w ręce
     public GameObject BackItemPosition;                 //Pozycja itemu w plecaku
+    public GameObject CurrentItemPositionDestination;
     GameObject CurrentItem;                             //Co trzymam w ręce
+    bool DisplayCrosshair = true;
     int DestinationFieldOfView = 60;
     //InteractionRaycast//
     float InteractionDistance = 15;
     string GuiMessage = "";
     RaycastHit hit;
     Ray landingRay;
+    public Texture CrossHairTexture;
     //==================//
     void Start()
     {
         ctrl = GetComponent<CharacterController>();
         character = GetComponent<Character>();
         LastPlayerPosition = transform.position;
+        CurrentItemPositionDestination.transform.position = Hippos.transform.position;
     }
     void Update()
     {
         KeyboardMovement();                 //Obsługa ruchu klawiatury
-        MouseMovement();                    //Obsługa ruchu myszy
+        if(MouseMovementEnabled)
+        {
+            MouseMovement();                    //Obsługa ruchu myszy
+        }
+
         HandMovement();                     //Obsługa ruchu rąk
         ChangeCamera();                     //Zmiana kamer
         CharacterInteractionRaycast();      //Obsługa interakcji użytkownika ze środowiskiem
@@ -120,19 +129,24 @@ public class CharacterMovement : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
-            CurrentItemPosition.transform.position = Eyepos.transform.position;
+            CurrentItemPositionDestination.transform.position = Eyepos.transform.position;
             DestinationFieldOfView = 40;
-
+            DisplayCrosshair = false;
         }
         if (Input.GetMouseButtonUp(1))
         {
-            CurrentItemPosition.transform.position = Hippos.transform.position;
+            CurrentItemPositionDestination.transform.position = Hippos.transform.position;
             DestinationFieldOfView = 60;
+            DisplayCrosshair = true;
         }
 
         if (FPCamera.fieldOfView != DestinationFieldOfView)
         {
             FPCamera.fieldOfView += (DestinationFieldOfView - FPCamera.fieldOfView) / 20.0f;
+        }
+        if(CurrentItemPosition.transform.position != CurrentItemPositionDestination.transform.position)
+        {
+            CurrentItemPosition.transform.position += (CurrentItemPositionDestination.transform.position - CurrentItemPosition.transform.position)/5.0f;
         }
     }
     void ChangeCamera()
@@ -158,7 +172,7 @@ public class CharacterMovement : MonoBehaviour
         {
             if (hit.collider.GetComponent<_gripable>())
             {
-                GuiMessage = "Grab " + hit.collider.name.ToString();
+                GuiMessage = "Grab gripable " + hit.collider.name.ToString();
                 if (Input.GetKey(KeyCode.F) && !CurrentItemPosition.GetComponent<SpringJoint>())
                 {
                     if (hit.collider.tag == "NPC")
@@ -180,9 +194,9 @@ public class CharacterMovement : MonoBehaviour
                 }
             }
             //ŁAPANIE BRONI
-            else if (hit.collider.GetComponent<Gun>())
+            else if (hit.collider.GetComponent<Gun>() && hit.collider.GetComponent<Gun>().Type != GunType.meelee)
             {
-                GuiMessage = "Grab " + hit.collider.GetComponent<Gun>().Type;
+                GuiMessage = "Grab gun" + hit.collider.GetComponent<Gun>().Type;
                 if (Input.GetKeyDown(KeyCode.F))
                 {
                     if (!character.GunsList.Exists(f => f.GetComponent<Gun>().Type == hit.collider.GetComponent<Gun>().Type))     //Czy na liscie broni znajduje sie .. szotgan ?
@@ -191,7 +205,6 @@ public class CharacterMovement : MonoBehaviour
                         hit.collider.gameObject.GetComponent<Rigidbody>().isKinematic = true;
                         hit.collider.gameObject.GetComponent<Rigidbody>().useGravity = false;
                         Debug.Log("Podniesiono " + hit.collider.GetComponent<Gun>().Type + " health:" + hit.collider.GetComponent<Gun>().Health + " ammo: " + hit.collider.GetComponent<Gun>().AmmoLoaded);
-                        Debug.Log(character.GunsList.Count);
                         hit.collider.gameObject.transform.position = BackItemPosition.transform.position;
                         hit.collider.gameObject.transform.rotation = BackItemPosition.transform.rotation;
                         hit.collider.gameObject.transform.SetParent(BackItemPosition.transform);
@@ -216,7 +229,6 @@ public class CharacterMovement : MonoBehaviour
                     hit.collider.gameObject.GetComponent<Rigidbody>().isKinematic = true;
                     hit.collider.gameObject.GetComponent<Rigidbody>().useGravity = false;
                     Debug.Log("Podniesiono " + hit.collider.GetComponent<GunAmmo>().ammoType + " amount: " + hit.collider.GetComponent<GunAmmo>().ammoAmount);
-                    Debug.Log(character.GunsList.Count);
                     hit.collider.gameObject.transform.position = BackItemPosition.transform.position;
                     hit.collider.gameObject.transform.rotation = BackItemPosition.transform.rotation;
                     hit.collider.gameObject.transform.SetParent(BackItemPosition.transform);
@@ -245,7 +257,11 @@ public class CharacterMovement : MonoBehaviour
         GUI.Button(new Rect(120, Screen.height - 30, 50, 30), character.Health.ToString()); // HEALTH
 
         GUI.Label(new Rect(Screen.width / 2, Screen.height / 2, 280, 20), GuiMessage); // MESSAGE
-        GUI.Box(new Rect(Screen.width / 2, Screen.height / 2, 10, 10), ""); // CROSSHAIR
+
+        if(DisplayCrosshair)
+        {
+            GUI.DrawTexture(new Rect((Screen.width / 2)-2,(Screen.height / 2)-2, 4, 4), CrossHairTexture);
+        }
 
     }
 

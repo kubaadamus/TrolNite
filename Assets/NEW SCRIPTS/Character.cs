@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class Character : MonoBehaviour
 {
     public GameObject Melee;
+    public GameObject DesertEagle;
     public Text AmmoUiText;
     public Text HealthUiText;
     public Text TypeUiText;
@@ -17,10 +18,7 @@ public class Character : MonoBehaviour
     Vector3 actualshit = new Vector3(950, 450, 0);
     int InidexOfSelectedGun = 0;
     Button Descriptionbut = null;
-
     public AudioClip GunSelect;
-
-
     public bool IsUiActive = false;
     public Vector3[] UiItemsArray = new Vector3[30];
     public Button _but;
@@ -44,13 +42,17 @@ public class Character : MonoBehaviour
         Movement = GetComponent<CharacterMovement>();
         Cursor.lockState = CursorLockMode.Locked;
         GunsList = new List<GameObject>();
+
         GunsList.Add(Instantiate(Melee, Movement.CurrentItemPosition.transform.position, Movement.CurrentItemPosition.transform.rotation));
+        AddGun(DesertEagle);
         WeaponSelect();
         GunAmmoList = new List<GameObject>();
         SetGunActive();
         HealthUiText.text = Health.ToString();
         FillUiItemsArray();
         EmptyButton.gameObject.SetActive(false);
+        MouseUiCursor.transform.localScale = new Vector3(0, 0, 0);
+        actualshit = new Vector3(Screen.width / 2, Screen.height / 2, 0);
 
     }
     // Update is called once per frame
@@ -89,10 +91,10 @@ public class Character : MonoBehaviour
     }
     public void WeaponSelect(int SelectedGun)
     {
-                SetGunInactive();
-                SelectedItem = SelectedGun;
-                SetGunActive();
-                Debug.Log("Wybrano " + GunsList[SelectedItem].GetComponent<Gun>().Type);
+        SetGunInactive();
+        SelectedItem = SelectedGun;
+        SetGunActive();
+        Debug.Log("Wybrano " + GunsList[SelectedItem].GetComponent<Gun>().Type);
     }
     public void SetGunActive()
     {
@@ -102,7 +104,11 @@ public class Character : MonoBehaviour
         ActiveGun = GunsList[SelectedItem].GetComponent<Gun>();
         ActiveGun.GetComponent<Animation>().Play("Idle");
         HealthUiText.text = ActiveGun.Health.ToString();
-        AmmoUiText.text = ActiveGun.AmmoLoaded.ToString();
+        if(ActiveGun.Type!=GunType.meelee)
+        {
+            AmmoUiText.text = ActiveGun.AmmoLoaded.ToString();
+        }
+
         TypeUiText.text = ActiveGun.Type.ToString();
         AudioSourceHandlerScript.PlayAudio(GunSelect, transform.position, 1.0f);
     }
@@ -111,13 +117,20 @@ public class Character : MonoBehaviour
         GunsList[SelectedItem].transform.position = Movement.BackItemPosition.transform.position;
         GunsList[SelectedItem].transform.rotation = Movement.BackItemPosition.transform.rotation;
         GunsList[SelectedItem].transform.SetParent(Movement.CurrentItemPosition.transform);
+        if (ActiveGun.Type != GunType.meelee)
+        {
+            AmmoUiText.text = "0";
+        }
         ActiveGun = null;
-        AmmoUiText.text = "0";
+
     }
     public void DisplayEquipment()
     {
         if (Input.GetMouseButtonDown(2))
         {
+            Movement.MouseMovementEnabled = false;
+            MouseUiCursor.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            MouseUiCursor.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, 0);
             IsUiActive = true;
             Debug.Log("BRONIE---------------");
             int itemCount = 0;
@@ -138,62 +151,72 @@ public class Character : MonoBehaviour
             }
 
         }
-        if(IsUiActive)
+        if (IsUiActive)
         {
-            MouseTransform = new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0) * 4;
+
+            MouseTransform = new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0) * 10;
             //Debug.Log(MouseUiCursor.transform.position);
             actualshit += MouseTransform;
-            if(actualshit.x<800)
+            if (actualshit.x < Screen.width / 2 - 200)
             {
-                actualshit = new Vector3(800, actualshit.y, actualshit.z);
+                actualshit = new Vector3(Screen.width / 2 - 200, actualshit.y, actualshit.z);
             }
-            if (actualshit.x > 1100)
+            if (actualshit.x > Screen.width / 2 + 200)
             {
-                actualshit = new Vector3(1100, actualshit.y, actualshit.z);
+                actualshit = new Vector3(Screen.width / 2 + 200, actualshit.y, actualshit.z);
             }
-            if (actualshit.y > 600)
+            if (actualshit.y > Screen.height / 2 + 200)
             {
-                actualshit = new Vector3(actualshit.x, 600, actualshit.z);
+                actualshit = new Vector3(actualshit.x, Screen.height / 2 + 200, actualshit.z);
             }
-            if (actualshit.y < 300)
+            if (actualshit.y < Screen.height / 2 - 200)
             {
-                actualshit = new Vector3(actualshit.x, 300, actualshit.z);
+                actualshit = new Vector3(actualshit.x, Screen.height / 2 - 200, actualshit.z);
             }
             //Debug.Log(actualshit);
             MouseUiCursor.transform.position = actualshit;
             //Jesli pozycja tego tymczasowego kursora jest bliżej do któregoś buttona niż określony MinDistance to aktywuj tego buttona
             foreach (Transform child in _Canvas.transform)
             {
-                if (child.gameObject.name.Contains("Button") && Vector3.Distance(child.gameObject.transform.position,MouseUiCursor.transform.position)<25)
+                if (child.gameObject.name.Contains("Button"))
                 {
-                    child.gameObject.GetComponent<Button>().Select();
-                    Debug.Log(child.gameObject.GetComponent<Button>().GetComponentInChildren<Text>().text);
+                    if (Vector3.Distance(child.gameObject.transform.position, MouseUiCursor.transform.position) < 25)
+                    {
+                        child.gameObject.GetComponent<Button>().GetComponent<Image>().color = Color.red;
+                        Debug.Log(child.gameObject.GetComponent<Button>().GetComponentInChildren<Text>().text);
 
-                    //ustal którym indeksem na liście broni jest to co ma w nazwie string powyżej
+                        //ustal którym indeksem na liście broni jest to co ma w nazwie string powyżej
 
-                    InidexOfSelectedGun = GunsList.FindIndex(f => f.GetComponent<Gun>().Type.ToString() == child.gameObject.GetComponent<Button>().GetComponentInChildren<Text>().text);
-                    Debug.Log("INDEKS ZAZNACZONEJ BRONI TO:" + InidexOfSelectedGun);
+                        InidexOfSelectedGun = GunsList.FindIndex(f => f.GetComponent<Gun>().Type.ToString() == child.gameObject.GetComponent<Button>().GetComponentInChildren<Text>().text);
+                        Debug.Log("INDEKS ZAZNACZONEJ BRONI TO:" + InidexOfSelectedGun);
+                    }
+                    else
+                    {
+                        child.gameObject.GetComponent<Button>().GetComponent<Image>().color = Color.white;
+                    }
 
                 }
                 else
                 {
-                    EmptyButton.Select();
+
                 }
             }
         }
         if (Input.GetMouseButtonUp(2))
         {
-            actualshit = new Vector3(950, 450, 0);
+            Movement.MouseMovementEnabled = true;
+            actualshit = new Vector3(Screen.width / 2, Screen.height / 2, 0);
             IsUiActive = false;
             foreach (Transform child in _Canvas.transform)
             {
-                if(child.gameObject.name.Contains("Button") && !child.gameObject.name.Contains("Empty"))
+                if (child.gameObject.name.Contains("Button") && !child.gameObject.name.Contains("Empty"))
                 {
                     GameObject.Destroy(child.gameObject);
                 }
 
             }
             MouseUiCursor.transform.localPosition = new Vector3(0, 0, 0);
+            MouseUiCursor.transform.localScale = new Vector3(0, 0, 0);
             WeaponSelect(InidexOfSelectedGun);
         }
     }
@@ -202,12 +225,16 @@ public class Character : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && ActiveGun != null)
         {
             ActiveGun.Shot();
-            AmmoUiText.text = ActiveGun.AmmoLoaded.ToString();
+            if(ActiveGun.Type != GunType.meelee)
+            {
+                AmmoUiText.text = ActiveGun.AmmoLoaded.ToString();
+            }
+
         }
     }
     public void DropGun()
     {
-        if (Input.GetKeyDown(KeyCode.X) && GunsList[SelectedItem].GetComponent<Gun>().Type!=GunType.meelee)
+        if (Input.GetKeyDown(KeyCode.X) && GunsList[SelectedItem].GetComponent<Gun>().Type != GunType.meelee)
         {
             GunsList[SelectedItem].GetComponent<Rigidbody>().isKinematic = false;
             GunsList[SelectedItem].GetComponent<Rigidbody>().useGravity = true;
@@ -216,18 +243,18 @@ public class Character : MonoBehaviour
             Debug.Log("Wyrzucono: " + GunsList[SelectedItem].GetComponent<Gun>().Type);
             GunsList.Remove(GunsList[SelectedItem]);
             SelectedItem = 0;
-            SetGunActive(); 
+            SetGunActive();
         }
     }
     public void ReloadGun()
     {
-        if(Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) && ActiveGun.Type!=GunType.meelee)
         {
             //sprawdz typ broni ktora trzymasz
             GunType HeldWeaponType = ActiveGun.Type;
             //sprawdz czy masz ammo w schowku
             GameObject MatchedAmmoType = null;
-            foreach(GameObject ammo in GunAmmoList)
+            foreach (GameObject ammo in GunAmmoList)
             {
                 if (ammo.GetComponent<GunAmmo>().ammoType.ToString() == HeldWeaponType.ToString())
                 {
@@ -239,19 +266,19 @@ public class Character : MonoBehaviour
                     Debug.Log("Nie mam ammo do tej broni :C");
                 }
             }
-            if(MatchedAmmoType != null && ActiveGun.AmmoLoaded<ActiveGun.MaxAmmo)
+            if (MatchedAmmoType != null && ActiveGun.AmmoLoaded < ActiveGun.MaxAmmo)
             {
                 //le potrzeba amunicji żeby na max przeładować guna?
                 int NeededAmmo = ActiveGun.MaxAmmo - ActiveGun.AmmoLoaded;
 
-                if(NeededAmmo>=MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount)  //Jeśli potrzeba więcej lub równo tego co mamy w kieszeni to wysyłamy gunowi wszystko
+                if (NeededAmmo >= MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount)  //Jeśli potrzeba więcej lub równo tego co mamy w kieszeni to wysyłamy gunowi wszystko
                 {
                     ActiveGun.Reload(MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount);
                     MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount = 0;
                 }
-                if(NeededAmmo<MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount)   //Jesli potrzeba mniej niż mamy w kieszeni to wyjmij tyle ile trzeba i wyslij gunowi
+                if (NeededAmmo < MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount)   //Jesli potrzeba mniej niż mamy w kieszeni to wyjmij tyle ile trzeba i wyslij gunowi
                 {
-                    ActiveGun.Reload(ActiveGun.MaxAmmo- ActiveGun.AmmoLoaded);
+                    ActiveGun.Reload(ActiveGun.MaxAmmo - ActiveGun.AmmoLoaded);
                     MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount -= ActiveGun.MaxAmmo - ActiveGun.AmmoLoaded;
                 }
                 Debug.Log("Reloaded! pozostało wolnej amunicji" + MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount);
@@ -267,11 +294,24 @@ public class Character : MonoBehaviour
     }
     public void FillUiItemsArray()
     {
-        for(int i=0; i<30; i++)
+        for (int i = 0; i < 30; i++)
         {
             UiItemsArray[i] = new Vector3(i * 55 - 100, 0, 0);
         }
     }
+    public void AddGun(GameObject GunToAdd)
+    {
+        GameObject AddedGun = Instantiate(GunToAdd, Movement.BackItemPosition.transform.position, Movement.BackItemPosition.transform.rotation);
+        AddedGun.GetComponent<Rigidbody>().isKinematic = true;
+        AddedGun.GetComponent<Rigidbody>().useGravity = false;
+        Debug.Log("Podniesiono " + AddedGun.GetComponent<Gun>().Type + " health:" + AddedGun.GetComponent<Gun>().Health + " ammo: " + AddedGun.GetComponent<Gun>().AmmoLoaded);
+        AddedGun.transform.position = Movement.BackItemPosition.transform.position;
+        AddedGun.transform.rotation = Movement.BackItemPosition.transform.rotation;
+        AddedGun.transform.SetParent(Movement.BackItemPosition.transform);
+        AudioSourceHandlerScript.PlayAudio(Movement.GunPickUpAudioClip, transform.position, 1.0f);
+        GunsList.Add(AddedGun);
+    }
+
 }
 
 

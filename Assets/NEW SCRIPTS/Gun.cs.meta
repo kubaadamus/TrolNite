@@ -1,11 +1,19 @@
 fileFormatVersion: 2
 guid: 2ed2577db91983f41a58796dbb12b2b9
-timeCreated: 1538617458
-licenseType: Free
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - GunBarrelPosition: {instanceID: 0}
+  - ShotClip: {instanceID: 0}
+  - NoAmmoClip: {instanceID: 0}
+  - BulletImpactClip: {instanceID: 0}
+  - ReloadClip: {instanceID: 0}
+  - GunDrop: {instanceID: 0}
+  - RedDot: {fileID: 108870466129228216, guid: 662358304cb885e47b0f1571674c99ef, type: 2}
+  - GunParticles: {instanceID: 0}
+  - RayCastPinpointObject: {instanceID: 0}
+  - pocisk: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

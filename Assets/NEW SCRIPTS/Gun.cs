@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public enum GunType {meelee, pistol, shotgun, rifle, sniper, granade, mine };
+public enum GunType { meelee, pistol, shotgun, rifle, sniper, granade, mine };
 
-public class Gun : MonoBehaviour {  //Rzeczywisty obiekt, który będzie obsługiwany w grze
+public class Gun : MonoBehaviour
+{  //Rzeczywisty obiekt, który będzie obsługiwany w grze
     //DANE GUNA//
     public GunType Type;
     public int Health = 100;
@@ -21,6 +22,7 @@ public class Gun : MonoBehaviour {  //Rzeczywisty obiekt, który będzie obsług
     public AudioClip GunDrop;
     //RAYCAST GUNA//
     RaycastHit hit;
+    public Light RedDot;
     //EFEKT UDERZENIA GUNA//
     public GameObject GunParticles;
     public GameObject RayCastPinpointObject;
@@ -34,9 +36,15 @@ public class Gun : MonoBehaviour {  //Rzeczywisty obiekt, który będzie obsług
     void Start()
     {
         LastTimeBulletWasShot = Time.timeSinceLevelLoad;
+        if(RedDot!=null)
+        {
+            RedDot = Instantiate(RedDot, transform.position, Quaternion.Euler(0, 0, 0));
+        }
+
     }
     void Update()
     {
+        RedDotHandler();
     }
     public void Shot()
     {
@@ -45,7 +53,10 @@ public class Gun : MonoBehaviour {  //Rzeczywisty obiekt, który będzie obsług
             Debug.Log("Strzeliles z :" + Type);
             GetComponent<Animation>().Stop();
             GetComponent<Animation>().Play("Shoot");
-            AmmoLoaded -= 1;
+            if(Type!=GunType.meelee)
+            {
+                AmmoLoaded -= 1;
+            }
             AudioSourceHandlerScript.PlayAudio(ShotClip, transform.position, 1.0f);
             BulletImpactDetection();
         }
@@ -54,6 +65,26 @@ public class Gun : MonoBehaviour {  //Rzeczywisty obiekt, który będzie obsług
             Debug.Log("BRAK AMMO!");
             AudioSourceHandlerScript.PlayAudio(NoAmmoClip, transform.position, 1.0f);
         }
+    }
+    void RedDotHandler()
+    {
+        //WYKRYWANIE UDERZENIA
+        if(GunBarrelPosition!=null)
+        {
+            Ray GunRayRedDot = new Ray(GunBarrelPosition.transform.position, GunBarrelPosition.transform.forward);
+            Debug.DrawRay(GunBarrelPosition.transform.position, GunBarrelPosition.transform.forward * GunRange);
+            //STRZELANIE RAYCASTEM
+            if (Physics.Raycast(GunRayRedDot, out hit, GunRange))
+            {
+                RedDot.transform.position = hit.point + hit.normal.normalized / 50.0f;
+                RedDot.transform.rotation = Quaternion.LookRotation(hit.normal);
+            }
+            else
+            {
+                RedDot.transform.position = new Vector3(0, 0, 0);
+            }
+        }
+
     }
     void BulletImpactDetection()
     {
@@ -79,7 +110,7 @@ public class Gun : MonoBehaviour {  //Rzeczywisty obiekt, który będzie obsług
             }
             try
             {
-                hit.collider.gameObject.GetComponent<Rigidbody>().AddForce(GunRay.direction * 200*GunDamage);
+                hit.collider.gameObject.GetComponent<Rigidbody>().AddForce(GunRay.direction * 200 * GunDamage);
             }
             catch (System.Exception) { }
             try
@@ -87,7 +118,7 @@ public class Gun : MonoBehaviour {  //Rzeczywisty obiekt, który będzie obsług
                 hit.collider.gameObject.GetComponent<ColliderScript>().skrypt.DamageHandler(hit.collider.gameObject.GetComponent<ColliderScript>().name, "bullet");
             }
             catch (System.Exception) { }
-            AudioSourceHandlerScript.PlayAudio(BulletImpactClip, hit.point, Random.Range(0.5f,1.5f));
+            AudioSourceHandlerScript.PlayAudio(BulletImpactClip, hit.point, Random.Range(0.5f, 1.5f));
         }
     }
     public void Reload(int amount)
@@ -98,6 +129,6 @@ public class Gun : MonoBehaviour {  //Rzeczywisty obiekt, który będzie obsług
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("GUN KOLIDUJE z siłą" + collision.relativeVelocity.magnitude);
-        AudioSourceHandlerScript.PlayAudio(GunDrop, transform.position, Random.Range(0.8f, 1.2f),0,collision.relativeVelocity.magnitude/40.0f);
+        AudioSourceHandlerScript.PlayAudio(GunDrop, transform.position, Random.Range(0.8f, 1.2f), 0, collision.relativeVelocity.magnitude / 40.0f);
     }
 }

@@ -8,15 +8,15 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications: []
     m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
+  m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1692919503463522}
-  m_IsPrefabParent: 1
+  m_IsPrefabAsset: 1
 --- !u!1 &1663398645882856
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 4541463573959590}
   m_Layer: 0
@@ -29,9 +29,9 @@ GameObject:
 --- !u!1 &1692919503463522
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 4267063570874854}
   - component: {fileID: 33828630544366664}
@@ -50,7 +50,7 @@ GameObject:
 --- !u!4 &4267063570874854
 Transform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1692919503463522}
   m_LocalRotation: {x: 0.000000081460335, y: 0, z: -0, w: 1}
@@ -64,7 +64,7 @@ Transform:
 --- !u!4 &4541463573959590
 Transform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1663398645882856}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
@@ -77,7 +77,7 @@ Transform:
 --- !u!23 &23649823381787784
 MeshRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1692919503463522}
   m_Enabled: 1
@@ -87,6 +87,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: e07f00199cf70e64a8c5e80ecdf71d82, type: 2}
   m_StaticBatchInfo:
@@ -111,14 +112,14 @@ MeshRenderer:
 --- !u!33 &33828630544366664
 MeshFilter:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1692919503463522}
   m_Mesh: {fileID: 0}
 --- !u!54 &54069427472545092
 Rigidbody:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1692919503463522}
   serializedVersion: 2
@@ -133,21 +134,21 @@ Rigidbody:
 --- !u!64 &64571977012354658
 MeshCollider:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1692919503463522}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: 0d30e2a600a1ff0499adcb5faa51a09e, type: 3}
 --- !u!111 &111153898495013974
 Animation:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1692919503463522}
   m_Enabled: 1
@@ -163,7 +164,7 @@ Animation:
 --- !u!114 &114051188061250776
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1692919503463522}
   m_Enabled: 1
@@ -174,17 +175,17 @@ MonoBehaviour:
   Type: 0
   Health: 100
   AmmoType: 0
-  AmmoLoaded: 10
+  AmmoLoaded: 2147483647
   GunBarrelPosition: {fileID: 1663398645882856}
   GunRange: 5
   GunDamage: 0
   MaxAmmo: 0
-  ShotClip: {fileID: 8300000, guid: a49ac3a4918452546901cb552eb89e37, type: 3}
+  ShotClip: {fileID: 8300000, guid: 113673d8aab09754687f6734132f69d9, type: 3}
   NoAmmoClip: {fileID: 8300000, guid: b88226a1773b59648b48a62a9a6edfef, type: 3}
   BulletImpactClip: {fileID: 8300000, guid: 38f44c0c968bf6a459862961944f1699, type: 3}
   ReloadClip: {fileID: 8300000, guid: f139308e01e175b4c9a940bb7be5ee4f, type: 3}
-  GunAudioSource: {fileID: 82775193304498498, guid: ef08ca7a31e9ddd46b756585808f978d,
-    type: 2}
+  GunDrop: {fileID: 8300000, guid: 36fef6326a89af54f94df4ff78276906, type: 3}
+  RedDot: {fileID: 108870466129228216, guid: 662358304cb885e47b0f1571674c99ef, type: 2}
   GunParticles: {fileID: 1083349566086338, guid: f0615938fc0e32b47bea047af3eb941e,
     type: 2}
   RayCastPinpointObject: {fileID: 1875752554387528, guid: 49afcb9e0019ec84a9f311783c1f4919,
