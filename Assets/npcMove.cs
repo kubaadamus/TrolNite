@@ -39,7 +39,7 @@ public class npcMove : MonoBehaviour {
     {
         if(collision.gameObject.tag=="bullet" && body==null)
         {
-            bullet pocisk = collision.gameObject.GetComponent<bullet>(); //REFERENCJA DO OBIEKTU COLLISONA! musisz pobrać z niego skrypt bullet!
+            //bullet pocisk = collision.gameObject.GetComponent<bullet>(); //REFERENCJA DO OBIEKTU COLLISONA! musisz pobrać z niego skrypt bullet!
             //Debug.Log("NPC został trafiony pociskiem od " + pocisk.NazwaGracza);
             body = gameObject.AddComponent(typeof(Rigidbody)) as Rigidbody;
             Destroy(_navMeshAgent);

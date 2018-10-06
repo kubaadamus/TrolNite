@@ -68,9 +68,6 @@
     <Compile Include="Assets\EnemyPlantScriptHANDMADE.cs" />
     <Compile Include="Assets\GameController.cs" />
     <Compile Include="Assets\LolScript.cs" />
-    <Compile Include="Assets\MultiplayerStuff\Bullet_multiplayer_Script.cs" />
-    <Compile Include="Assets\MultiplayerStuff\HealthScript.cs" />
-    <Compile Include="Assets\MultiplayerStuff\Player_multi_Controller.cs" />
     <Compile Include="Assets\NEW SCRIPTS\Character.cs" />
     <Compile Include="Assets\NEW SCRIPTS\CharacterCamera.cs" />
     <Compile Include="Assets\NEW SCRIPTS\CharacterMovement.cs" />
@@ -79,9 +76,6 @@
     <Compile Include="Assets\npcMove.cs" />
     <Compile Include="Assets\ParticleScript.cs" />
     <Compile Include="Assets\Prefabs\Elevator\ElevatorScript.cs" />
-    <Compile Include="Assets\Scripts\bullet.cs" />
-    <Compile Include="Assets\Scripts\CameraLoook.cs" />
-    <Compile Include="Assets\Scripts\RaycastDebug.cs" />
     <Compile Include="Assets\ShootPinPointScript.cs" />
     <Compile Include="Assets\TagScripts\_gripable.cs" />
     <Reference Include="UnityEditor.StandardEvents">

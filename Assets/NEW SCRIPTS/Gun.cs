@@ -26,7 +26,6 @@ public class Gun : MonoBehaviour
     //EFEKT UDERZENIA GUNA//
     public GameObject GunParticles;
     public GameObject RayCastPinpointObject;
-    public bullet pocisk;
     //ZMIENNE KARABINU MASZYNOWEGO
     bool machinegunIsFireing = false;
     float LastTimeBulletWasShot = 0;
@@ -38,7 +37,8 @@ public class Gun : MonoBehaviour
         LastTimeBulletWasShot = Time.timeSinceLevelLoad;
         if(RedDot!=null)
         {
-            RedDot = Instantiate(RedDot, transform.position, Quaternion.Euler(0, 0, 0));
+            if(Type!=GunType.meelee)
+            RedDot = Instantiate(RedDot, transform.position, Quaternion.Euler(0, -990, 0));
         }
 
     }
@@ -81,7 +81,7 @@ public class Gun : MonoBehaviour
             }
             else
             {
-                RedDot.transform.position = new Vector3(0, 0, 0);
+                RedDot.transform.position = new Vector3(0, -990, 0);
             }
         }
 

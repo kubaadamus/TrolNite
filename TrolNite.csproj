@@ -224,7 +224,6 @@
     <Compile Include="Assets\AudioSources\AudioSourceObjectDestroyerScript.cs" />
     <Compile Include="Assets\ColliderScript.cs" />
     <Compile Include="Assets\DesertEagleScript.cs" />
-    <Compile Include="Assets\ElevatorScript.cs" />
     <Compile Include="Assets\EnemyPlantScriptHANDMADE.cs" />
     <Compile Include="Assets\GameController.cs" />
     <Compile Include="Assets\LolScript.cs" />
@@ -238,6 +237,7 @@
     <Compile Include="Assets\NEW SCRIPTS\GunAmmo.cs" />
     <Compile Include="Assets\npcMove.cs" />
     <Compile Include="Assets\ParticleScript.cs" />
+    <Compile Include="Assets\Prefabs\Elevator\ElevatorScript.cs" />
     <Compile Include="Assets\Scripts\bullet.cs" />
     <Compile Include="Assets\Scripts\CameraLoook.cs" />
     <Compile Include="Assets\Scripts\RaycastDebug.cs" />

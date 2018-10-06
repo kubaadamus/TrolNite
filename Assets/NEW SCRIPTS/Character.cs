@@ -13,7 +13,6 @@ public class Character : MonoBehaviour
     public Text HealthUiText;
     public Text TypeUiText;
     public Image MouseUiCursor;
-    public Button EmptyButton;
     Vector3 MouseTransform = new Vector3(0, 0, 0);
     Vector3 actualshit = new Vector3(950, 450, 0);
     int InidexOfSelectedGun = 0;
@@ -50,7 +49,6 @@ public class Character : MonoBehaviour
         SetGunActive();
         HealthUiText.text = Health.ToString();
         FillUiItemsArray();
-        EmptyButton.gameObject.SetActive(false);
         MouseUiCursor.transform.localScale = new Vector3(0, 0, 0);
         actualshit = new Vector3(Screen.width / 2, Screen.height / 2, 0);
 
@@ -148,6 +146,12 @@ public class Character : MonoBehaviour
             foreach (GameObject ammo in GunAmmoList)
             {
                 Debug.Log("Type: " + ammo.GetComponent<GunAmmo>().ammoType + " / Amount: " + ammo.GetComponent<GunAmmo>().ammoAmount);
+                //Rysuj UI!
+                //Button but = Instantiate(_but);
+                //but.transform.SetParent(_Canvas.transform);
+                //but.transform.localPosition = UiItemsArray[itemCount];
+                //but.GetComponentInChildren<Text>().text = ammo.GetComponent<GunAmmo>().ammoType.ToString() + "AMMO";
+                //itemCount++;
             }
 
         }
