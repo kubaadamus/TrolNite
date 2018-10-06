@@ -68,6 +68,7 @@ public class CharacterMovement : MonoBehaviour
                 character.Health -= (int)(ctrl.velocity.magnitude * fallDamage_Factor);
                 Debug.Log("Walnales w ziemie z sila: " + ctrl.velocity.magnitude);
                 AudioSourceHandlerScript.PlayAudio(FallDamageAudioClip, transform.position, 1.0f);
+                character.HealthUiText.text = character.Health.ToString();
             }
         }
 

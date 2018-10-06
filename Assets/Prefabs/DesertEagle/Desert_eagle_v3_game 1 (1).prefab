@@ -119,7 +119,6 @@ GameObject:
   - component: {fileID: 114758232324894768}
   - component: {fileID: 65747249705253706}
   - component: {fileID: 54208786168202382}
-  - component: {fileID: 82780236954356216}
   m_Layer: 0
   m_Name: Desert_eagle_v3_game 1 (1)
   m_TagString: Untagged
@@ -908,86 +907,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.01, y: 0.02, z: 0.004}
   m_Center: {x: -0.006, y: 0.007, z: 0.001}
---- !u!82 &82780236954356216
-AudioSource:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1354163481545560}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: a49ac3a4918452546901cb552eb89e37, type: 3}
-  m_PlayOnAwake: 1
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
 --- !u!111 &111342070337785514
 Animation:
   m_ObjectHideFlags: 1
@@ -1023,13 +942,11 @@ MonoBehaviour:
   GunBarrelPosition: {fileID: 1804733732876848}
   GunRange: 1000
   GunDamage: 2
-  MaxAmmo: 0
+  MaxAmmo: 10
   ShotClip: {fileID: 8300000, guid: a49ac3a4918452546901cb552eb89e37, type: 3}
   NoAmmoClip: {fileID: 8300000, guid: b88226a1773b59648b48a62a9a6edfef, type: 3}
   BulletImpactClip: {fileID: 8300000, guid: 38f44c0c968bf6a459862961944f1699, type: 3}
   ReloadClip: {fileID: 8300000, guid: f139308e01e175b4c9a940bb7be5ee4f, type: 3}
-  GunAudioSource: {fileID: 82775193304498498, guid: ef08ca7a31e9ddd46b756585808f978d,
-    type: 2}
   GunParticles: {fileID: 1083349566086338, guid: f0615938fc0e32b47bea047af3eb941e,
     type: 2}
   RayCastPinpointObject: {fileID: 1875752554387528, guid: 49afcb9e0019ec84a9f311783c1f4919,

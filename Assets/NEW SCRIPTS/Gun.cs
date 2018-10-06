@@ -18,6 +18,7 @@ public class Gun : MonoBehaviour {  //Rzeczywisty obiekt, który będzie obsług
     public AudioClip NoAmmoClip;
     public AudioClip BulletImpactClip;
     public AudioClip ReloadClip;
+    public AudioClip GunDrop;
     //RAYCAST GUNA//
     RaycastHit hit;
     //EFEKT UDERZENIA GUNA//
@@ -93,5 +94,10 @@ public class Gun : MonoBehaviour {  //Rzeczywisty obiekt, który będzie obsług
     {
         AmmoLoaded += amount;
         AudioSourceHandlerScript.PlayAudio(ReloadClip, transform.position, 1.0f);
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("GUN KOLIDUJE z siłą" + collision.relativeVelocity.magnitude);
+        AudioSourceHandlerScript.PlayAudio(GunDrop, transform.position, Random.Range(0.8f, 1.2f),0,collision.relativeVelocity.magnitude/40.0f);
     }
 }

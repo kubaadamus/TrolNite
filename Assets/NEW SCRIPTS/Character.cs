@@ -2,11 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public class Character : MonoBehaviour
 {
     public GameObject Melee;
+    public Text AmmoUiText;
+    public Text HealthUiText;
+    public Text TypeUiText;
+    public Image MouseUiCursor;
+    public Button EmptyButton;
+    Vector3 MouseTransform = new Vector3(0, 0, 0);
+    Vector3 actualshit = new Vector3(950, 450, 0);
+    int InidexOfSelectedGun = 0;
+    Button Descriptionbut = null;
+
+    public AudioClip GunSelect;
+
+
+    public bool IsUiActive = false;
+    public Vector3[] UiItemsArray = new Vector3[30];
+    public Button _but;
+    public Canvas _Canvas;
     public string NazwaGracza = "";                     //Nazwa gracza
     public int Health = 50;                             //Zycie
     public List<GameObject> GunsList;                   //Lista broni
@@ -30,6 +48,9 @@ public class Character : MonoBehaviour
         WeaponSelect();
         GunAmmoList = new List<GameObject>();
         SetGunActive();
+        HealthUiText.text = Health.ToString();
+        FillUiItemsArray();
+        EmptyButton.gameObject.SetActive(false);
 
     }
     // Update is called once per frame
@@ -66,6 +87,13 @@ public class Character : MonoBehaviour
             }
         }
     }
+    public void WeaponSelect(int SelectedGun)
+    {
+                SetGunInactive();
+                SelectedItem = SelectedGun;
+                SetGunActive();
+                Debug.Log("Wybrano " + GunsList[SelectedItem].GetComponent<Gun>().Type);
+    }
     public void SetGunActive()
     {
         GunsList[SelectedItem].transform.position = Movement.CurrentItemPosition.transform.position;
@@ -73,6 +101,10 @@ public class Character : MonoBehaviour
         GunsList[SelectedItem].transform.SetParent(Movement.CurrentItemPosition.transform);
         ActiveGun = GunsList[SelectedItem].GetComponent<Gun>();
         ActiveGun.GetComponent<Animation>().Play("Idle");
+        HealthUiText.text = ActiveGun.Health.ToString();
+        AmmoUiText.text = ActiveGun.AmmoLoaded.ToString();
+        TypeUiText.text = ActiveGun.Type.ToString();
+        AudioSourceHandlerScript.PlayAudio(GunSelect, transform.position, 1.0f);
     }
     public void SetGunInactive()
     {
@@ -80,21 +112,89 @@ public class Character : MonoBehaviour
         GunsList[SelectedItem].transform.rotation = Movement.BackItemPosition.transform.rotation;
         GunsList[SelectedItem].transform.SetParent(Movement.CurrentItemPosition.transform);
         ActiveGun = null;
+        AmmoUiText.text = "0";
     }
     public void DisplayEquipment()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetMouseButtonDown(2))
         {
+            IsUiActive = true;
             Debug.Log("BRONIE---------------");
+            int itemCount = 0;
             foreach (GameObject gun in GunsList)
             {
                 Debug.Log("Type: " + gun.GetComponent<Gun>().Type + " / Health: " + gun.GetComponent<Gun>().Health + " / Ammo: " + gun.GetComponent<Gun>().AmmoLoaded);
+                //Rysuj UI!
+                Button but = Instantiate(_but);
+                but.transform.SetParent(_Canvas.transform);
+                but.transform.localPosition = UiItemsArray[itemCount];
+                but.GetComponentInChildren<Text>().text = gun.GetComponent<Gun>().Type.ToString();
+                itemCount++;
             }
             Debug.Log("AMMO-----------------");
             foreach (GameObject ammo in GunAmmoList)
             {
                 Debug.Log("Type: " + ammo.GetComponent<GunAmmo>().ammoType + " / Amount: " + ammo.GetComponent<GunAmmo>().ammoAmount);
             }
+
+        }
+        if(IsUiActive)
+        {
+            MouseTransform = new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0) * 4;
+            //Debug.Log(MouseUiCursor.transform.position);
+            actualshit += MouseTransform;
+            if(actualshit.x<800)
+            {
+                actualshit = new Vector3(800, actualshit.y, actualshit.z);
+            }
+            if (actualshit.x > 1100)
+            {
+                actualshit = new Vector3(1100, actualshit.y, actualshit.z);
+            }
+            if (actualshit.y > 600)
+            {
+                actualshit = new Vector3(actualshit.x, 600, actualshit.z);
+            }
+            if (actualshit.y < 300)
+            {
+                actualshit = new Vector3(actualshit.x, 300, actualshit.z);
+            }
+            //Debug.Log(actualshit);
+            MouseUiCursor.transform.position = actualshit;
+            //Jesli pozycja tego tymczasowego kursora jest bliżej do któregoś buttona niż określony MinDistance to aktywuj tego buttona
+            foreach (Transform child in _Canvas.transform)
+            {
+                if (child.gameObject.name.Contains("Button") && Vector3.Distance(child.gameObject.transform.position,MouseUiCursor.transform.position)<25)
+                {
+                    child.gameObject.GetComponent<Button>().Select();
+                    Debug.Log(child.gameObject.GetComponent<Button>().GetComponentInChildren<Text>().text);
+
+                    //ustal którym indeksem na liście broni jest to co ma w nazwie string powyżej
+
+                    InidexOfSelectedGun = GunsList.FindIndex(f => f.GetComponent<Gun>().Type.ToString() == child.gameObject.GetComponent<Button>().GetComponentInChildren<Text>().text);
+                    Debug.Log("INDEKS ZAZNACZONEJ BRONI TO:" + InidexOfSelectedGun);
+
+                }
+                else
+                {
+                    EmptyButton.Select();
+                }
+            }
+        }
+        if (Input.GetMouseButtonUp(2))
+        {
+            actualshit = new Vector3(950, 450, 0);
+            IsUiActive = false;
+            foreach (Transform child in _Canvas.transform)
+            {
+                if(child.gameObject.name.Contains("Button") && !child.gameObject.name.Contains("Empty"))
+                {
+                    GameObject.Destroy(child.gameObject);
+                }
+
+            }
+            MouseUiCursor.transform.localPosition = new Vector3(0, 0, 0);
+            WeaponSelect(InidexOfSelectedGun);
         }
     }
     public void UseGun()
@@ -102,6 +202,7 @@ public class Character : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && ActiveGun != null)
         {
             ActiveGun.Shot();
+            AmmoUiText.text = ActiveGun.AmmoLoaded.ToString();
         }
     }
     public void DropGun()
@@ -154,12 +255,21 @@ public class Character : MonoBehaviour
                     MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount -= ActiveGun.MaxAmmo - ActiveGun.AmmoLoaded;
                 }
                 Debug.Log("Reloaded! pozostało wolnej amunicji" + MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount);
+                AmmoUiText.text = ActiveGun.AmmoLoaded.ToString();
                 if (MatchedAmmoType.GetComponent<GunAmmo>().ammoAmount == 0)
                 {
                     GunAmmoList.Remove(MatchedAmmoType);
                     Destroy(MatchedAmmoType);
                 }
             }
+        }
+
+    }
+    public void FillUiItemsArray()
+    {
+        for(int i=0; i<30; i++)
+        {
+            UiItemsArray[i] = new Vector3(i * 55 - 100, 0, 0);
         }
     }
 }

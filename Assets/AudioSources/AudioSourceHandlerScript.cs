@@ -15,12 +15,13 @@ public class AudioSourceHandlerScript : MonoBehaviour
     {
 
     }
-    public static void PlayAudio(AudioClip Clip, Vector3 Position, float Pitch, float Pan = 0)
+    public static void PlayAudio(AudioClip Clip, Vector3 Position, float Pitch, float Pan = 0, float volume = 1.0f)
     {
         SrcObject = new GameObject();
         (SrcObject.AddComponent<AudioSource>()).clip = Clip;
         SrcObject.GetComponent<AudioSource>().pitch = Pitch;
         SrcObject.GetComponent<AudioSource>().panStereo = Pan;
+        SrcObject.GetComponent<AudioSource>().volume = volume;
         SrcObject.transform.position = Position;
         SrcObject.GetComponent<AudioSource>().Play();
         SrcObject.AddComponent<AudioSourceObjectDestroyerScript>();
