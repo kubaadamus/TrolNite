@@ -76,6 +76,7 @@
     <Compile Include="Assets\npcMove.cs" />
     <Compile Include="Assets\ParticleScript.cs" />
     <Compile Include="Assets\Prefabs\Elevator\ElevatorScript.cs" />
+    <Compile Include="Assets\Prefabs\UIPrefabs\UiButtonItemReferenceScript.cs" />
     <Compile Include="Assets\ShootPinPointScript.cs" />
     <Compile Include="Assets\TagScripts\_gripable.cs" />
     <Reference Include="UnityEditor.StandardEvents">

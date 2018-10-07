@@ -943,9 +943,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ed2577db91983f41a58796dbb12b2b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Type: 3
+  Type: 1
   Health: 100
-  AmmoType: 0
+  AmmoType: 1
   AmmoLoaded: 10
   GunBarrelPosition: {fileID: 1804733732876848}
   GunRange: 1000
@@ -961,4 +961,3 @@ MonoBehaviour:
     type: 2}
   RayCastPinpointObject: {fileID: 1875752554387528, guid: 49afcb9e0019ec84a9f311783c1f4919,
     type: 2}
-  pocisk: {fileID: 0}

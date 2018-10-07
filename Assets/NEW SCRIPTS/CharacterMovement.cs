@@ -57,7 +57,7 @@ public class CharacterMovement : MonoBehaviour
     void Update()
     {
         KeyboardMovement();                 //Obsługa ruchu klawiatury
-        if(MouseMovementEnabled)
+        if (MouseMovementEnabled)
         {
             MouseMovement();                    //Obsługa ruchu myszy
         }
@@ -119,9 +119,9 @@ public class CharacterMovement : MonoBehaviour
         }
         ctrl.Move(movement * Time.deltaTime);
 
-        if(ctrl.isGrounded && Vector3.Distance(transform.position, LastPlayerPosition)>StepDistance)
+        if (ctrl.isGrounded && Vector3.Distance(transform.position, LastPlayerPosition) > StepDistance)
         {
-            AudioSourceHandlerScript.PlayAudio(WalkAudioClip, transform.position, Random.Range(0.8f,1.2f),Random.Range(-0.5f,0.5f));
+            AudioSourceHandlerScript.PlayAudio(WalkAudioClip, transform.position, Random.Range(0.8f, 1.2f), Random.Range(-0.5f, 0.5f));
             LastPlayerPosition = transform.position;
         }
     }
@@ -144,9 +144,9 @@ public class CharacterMovement : MonoBehaviour
         {
             FPCamera.fieldOfView += (DestinationFieldOfView - FPCamera.fieldOfView) / 20.0f;
         }
-        if(CurrentItemPosition.transform.position != CurrentItemPositionDestination.transform.position)
+        if (CurrentItemPosition.transform.position != CurrentItemPositionDestination.transform.position)
         {
-            CurrentItemPosition.transform.position += (CurrentItemPositionDestination.transform.position - CurrentItemPosition.transform.position)/5.0f;
+            CurrentItemPosition.transform.position += (CurrentItemPositionDestination.transform.position - CurrentItemPosition.transform.position) / 5.0f;
         }
     }
     void ChangeCamera()
@@ -193,51 +193,33 @@ public class CharacterMovement : MonoBehaviour
                     Joint.enableCollision = true;
                 }
             }
-            //ŁAPANIE BRONI
-            else if (hit.collider.GetComponent<Gun>() && hit.collider.GetComponent<Gun>().Type != GunType.meelee)
+            //ŁAPANIE ITEMOW
+            else if ((hit.collider.GetComponent<Gun>() || hit.collider.GetComponent<GunAmmo>()))
             {
-                GuiMessage = "Grab gun" + hit.collider.GetComponent<Gun>().Type;
-                if (Input.GetKeyDown(KeyCode.F))
+                if(hit.collider.GetComponent<Gun>() && hit.collider.GetComponent<Gun>().Type != GunType.meelee)
                 {
-                    if (!character.GunsList.Exists(f => f.GetComponent<Gun>().Type == hit.collider.GetComponent<Gun>().Type))     //Czy na liscie broni znajduje sie .. szotgan ?
-                    {
-                        character.GunsList.Add(hit.collider.gameObject);                                                            //Wez do tej listy cały gameobject
-                        hit.collider.gameObject.GetComponent<Rigidbody>().isKinematic = true;
-                        hit.collider.gameObject.GetComponent<Rigidbody>().useGravity = false;
-                        Debug.Log("Podniesiono " + hit.collider.GetComponent<Gun>().Type + " health:" + hit.collider.GetComponent<Gun>().Health + " ammo: " + hit.collider.GetComponent<Gun>().AmmoLoaded);
-                        hit.collider.gameObject.transform.position = BackItemPosition.transform.position;
-                        hit.collider.gameObject.transform.rotation = BackItemPosition.transform.rotation;
-                        hit.collider.gameObject.transform.SetParent(BackItemPosition.transform);
-                        AudioSourceHandlerScript.PlayAudio(GunPickUpAudioClip, transform.position, 1.0f);
-                    }
-                    else
-                    {
-                        Debug.Log("Masz juz " + hit.collider.GetComponent<Gun>().Type + " podniesiono ammo: " + hit.collider.GetComponent<Gun>().AmmoLoaded + "sztuk");
-                        Destroy(hit.collider.gameObject);
-                    }
-
+                    GuiMessage = "Grab gun" + hit.collider.GetComponent<Gun>().Type;
                 }
-            }
-            //ŁAPANIE AMMO
-            else if (hit.collider.GetComponent<GunAmmo>())
-            {
-                GuiMessage = "Grab AMMO! " + hit.collider.GetComponent<GunAmmo>().ammoType;
+
                 if (Input.GetKeyDown(KeyCode.F))
                 {
-
-                    character.GunAmmoList.Add(hit.collider.gameObject);                                                            //Wez do tej listy cały gameobject
+                    character.ItemsList.Add(hit.collider.gameObject);                                                            //Wez do tej listy cały gameobject
                     hit.collider.gameObject.GetComponent<Rigidbody>().isKinematic = true;
                     hit.collider.gameObject.GetComponent<Rigidbody>().useGravity = false;
-                    Debug.Log("Podniesiono " + hit.collider.GetComponent<GunAmmo>().ammoType + " amount: " + hit.collider.GetComponent<GunAmmo>().ammoAmount);
+                    if (hit.collider.GetComponent<Gun>())
+                    {
+                        Debug.Log("Podniesiono " + hit.collider.GetComponent<Gun>().Type + " health:" + hit.collider.GetComponent<Gun>().Health + " ammo: " + hit.collider.GetComponent<Gun>().AmmoLoaded);
+                    }
+                    else if(hit.collider.GetComponent<GunAmmo>())
+                    {
+                        Debug.Log("Podniesiono " + hit.collider.GetComponent<GunAmmo>().ammoType + " ammo: " + hit.collider.GetComponent<GunAmmo>().ammoAmount);
+                    }
+
                     hit.collider.gameObject.transform.position = BackItemPosition.transform.position;
                     hit.collider.gameObject.transform.rotation = BackItemPosition.transform.rotation;
                     hit.collider.gameObject.transform.SetParent(BackItemPosition.transform);
                     AudioSourceHandlerScript.PlayAudio(GunPickUpAudioClip, transform.position, 1.0f);
                 }
-            }
-            else
-            {
-                GuiMessage = "";
             }
 
         }
@@ -258,9 +240,9 @@ public class CharacterMovement : MonoBehaviour
 
         GUI.Label(new Rect(Screen.width / 2, Screen.height / 2, 280, 20), GuiMessage); // MESSAGE
 
-        if(DisplayCrosshair)
+        if (DisplayCrosshair)
         {
-            GUI.DrawTexture(new Rect((Screen.width / 2)-2,(Screen.height / 2)-2, 4, 4), CrossHairTexture);
+            GUI.DrawTexture(new Rect((Screen.width / 2) - 2, (Screen.height / 2) - 2, 4, 4), CrossHairTexture);
         }
 
     }
